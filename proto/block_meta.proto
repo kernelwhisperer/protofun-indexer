@@ -4,10 +4,8 @@ package sf.ethereum.block_meta.v1;
 
 message BlockMeta {
   string hash = 1;
-  string parent_hash = 2;
-  uint64 number = 3;
-  string timestamp = 4;
-  uint64 gas_limit = 5;
-  uint64 gas_used = 6;
-  string base_fee_per_gas = 7;
+  uint64 number = 2;
+  string timestamp = 3;
+  uint64 gas_used = 4;
+  string base_fee_per_gas = 5;
 }

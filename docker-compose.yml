@@ -1,0 +1,38 @@
+version: "3"
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:14
+    ports:
+      - "5432:5432"
+    command: ["postgres", "-cshared_preload_libraries=pg_stat_statements"]
+    environment:
+      POSTGRES_USER: daniel
+      POSTGRES_PASSWORD: toor
+      POSTGRES_DB: protofun
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
+      POSTGRES_HOST_AUTH_METHOD: md5
+    volumes:
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "5432"]
+      interval: 30s
+      timeout: 10s
+      retries: 15
+  pgweb:
+    container_name: pgweb
+    image: sosedoff/pgweb:0.11.12
+    restart: on-failure
+    ports:
+      - "8000:8081"
+    command: ["pgweb", "--bind=0.0.0.0", "--listen=8081", "--binary-codec=hex"]
+    links:
+      - postgres:postgres
+    environment:
+      - DATABASE_URL=postgres://daniel:toor@postgres:5432/protofun?sslmode=disable
+    depends_on:
+      - postgres
+
+volumes:
+  pgdata:
