@@ -1,7 +1,6 @@
 create table block_meta
 (
     id          text not null constraint block_meta_pk primary key,
-    at          text,
     hash        text,
     number      integer,
     timestamp   text,
