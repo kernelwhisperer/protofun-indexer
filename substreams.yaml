@@ -17,6 +17,7 @@ binaries:
 modules:
   - name: map_block
     kind: map
+    initialBlock: 12965000 
     inputs:
       - source: sf.ethereum.type.v2.Block
     output:
@@ -24,6 +25,8 @@ modules:
 
   - name: store_block_meta
     kind: store
+    # Important: to avoid back-processing  
+    initialBlock: 12965000 
     updatePolicy: set_if_not_exists
     valueType: proto:eth.block_meta.v1.BlockMeta
     inputs:
@@ -31,6 +34,7 @@ modules:
 
   - name: db_out
     kind: map
+    initialBlock: 12965000 
     inputs:
       - store: store_block_meta
         mode: deltas

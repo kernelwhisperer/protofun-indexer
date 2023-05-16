@@ -21,9 +21,15 @@ package: build
 	substreams pack -o protofun.spkg ./substreams.yaml
 
 .PHONY: build-db
-build-db: package
+build-db:
 	docker compose up --detach
+
+.PHONY: remove-db
+remove-db:
+	docker-compose down
+	docker volume rm protofun_pgdata
 
 .PHONY: sync-db
 sync-db: package
-	substreams-sink-postgres run $(POSTGRESQL_DSN) $(ENDPOINT) "protofun.spkg" db_out $(START_BLOCK):$(STOP_BLOCK) 
+	# substreams-sink-postgres run $(POSTGRESQL_DSN) $(ENDPOINT) "protofun.spkg" db_out $(START_BLOCK):$(STOP_BLOCK) 
+	substreams-sink-postgres run $(POSTGRESQL_DSN) $(ENDPOINT) "protofun.spkg" db_out

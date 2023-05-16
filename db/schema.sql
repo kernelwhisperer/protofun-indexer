@@ -1,11 +1,10 @@
 create table block_meta
 (
-    id          text not null constraint block_meta_pk primary key,
+    id          integer not null constraint block_meta_pk primary key,
     hash        text,
-    number      integer,
     timestamp   text,
     gas_used integer,
-    base_fee_per_gas text
+    base_fee_per_gas integer
 );
 
 create table cursors
