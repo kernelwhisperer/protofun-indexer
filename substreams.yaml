@@ -40,3 +40,11 @@ modules:
         mode: deltas
     output:
       type: proto:sf.substreams.sink.database.v1.DatabaseChanges
+
+  - name: graph_out
+    kind: map
+    inputs:
+      - store: store_block_meta
+        mode: deltas
+    output:
+      type: proto:sf.substreams.entity.v1.EntityChanges

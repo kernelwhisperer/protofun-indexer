@@ -6,19 +6,15 @@ use substreams::{scalar::BigInt, Hex};
 use substreams_ethereum::pb::eth;
 
 #[path = "db_out.rs"]
-mod db;
+mod db_out;
+#[path = "graph_out.rs"]
+mod graph_out;
 
 use substreams::errors::Error;
 use substreams::store::{DeltaProto, StoreSetIfNotExistsProto};
 use substreams::{prelude::*, store};
 use substreams_database_change::pb::database::DatabaseChanges;
-
-
-#[substreams::handlers::map]
-fn map_block(block: eth::v2::Block) -> Result<BlockMeta, substreams::errors::Error> {
-    Ok(map_block_to_meta(block))
-}
-
+use substreams_entity_change::pb::entity::EntityChanges;
 
 fn map_block_to_meta(block: eth::v2::Block) -> BlockMeta {
     let header = block.header.as_ref().unwrap();
@@ -36,13 +32,8 @@ fn map_block_to_meta(block: eth::v2::Block) -> BlockMeta {
 }
 
 #[substreams::handlers::map]
-pub fn db_out(
-    block_meta: store::Deltas<DeltaProto<BlockMeta>>
-) -> Result<DatabaseChanges, Error> {
-    let mut database_changes: DatabaseChanges = Default::default();
-    db::block_meta_to_database_changes(&mut database_changes, block_meta);
-
-    Ok(database_changes)
+fn map_block(block: eth::v2::Block) -> Result<BlockMeta, substreams::errors::Error> {
+    Ok(map_block_to_meta(block))
 }
 
 #[substreams::handlers::store]
@@ -50,4 +41,24 @@ fn store_block_meta(block: eth::v2::Block, store: StoreSetIfNotExistsProto<Block
     let meta: BlockMeta = map_block_to_meta(block);
 
     store.set_if_not_exists(0, &meta.number.to_string(), &meta);
+}
+
+#[substreams::handlers::map]
+pub fn db_out(
+    block_meta: store::Deltas<DeltaProto<BlockMeta>>
+) -> Result<DatabaseChanges, Error> {
+    let mut database_changes: DatabaseChanges = Default::default();
+    db_out::block_meta_to_database_changes(&mut database_changes, block_meta);
+
+    Ok(database_changes)
+}
+
+#[substreams::handlers::map]
+pub fn graph_out(
+    block_meta: store::Deltas<DeltaProto<BlockMeta>>
+) -> Result<EntityChanges, Error> {
+    let mut entity_changes: EntityChanges = Default::default();
+    graph_out::block_meta_to_entities_changes(&mut entity_changes, block_meta);
+
+    Ok(entity_changes)
 }

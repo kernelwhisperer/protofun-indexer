@@ -38,6 +38,16 @@
     go version # go version go1.20.4 linux/amd64 after adding to $PATH
     ```
 
+4. TheGraph deps:
+
+    ```bash
+    npm install -g @graphprotocol/graph-cli
+    graph --version # @graphprotocol/graph-cli/0.49.0 wsl-x64 node-v16.13.2
+    npm install -g go-ipfs
+    ipfs --version # ipfs version 0.20.0
+    ipfs daemon
+    ```
+
 ## Running
 
 Install:
