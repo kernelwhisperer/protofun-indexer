@@ -1,8 +1,11 @@
 ENDPOINT ?= mainnet.eth.streamingfast.io:443
 POSTGRESQL_DSN ?= psql://daniel:toor@localhost:5432/protofun?sslmode=disable
 
-START_BLOCK ?= 12965000
-STOP_BLOCK  ?= 12965010
+# START_BLOCK ?= 12965000
+# STOP_BLOCK  ?= 12965010
+START_BLOCK ?= 12964995
+STOP_BLOCK  ?= 12965005
+# STOP_BLOCK  ?= 12965005
 
 IPFS_ENDPOINT ?= http://127.0.0.1:5001
 GRAPH_NODE_ENDPOINT ?= http://127.0.0.1:8020
@@ -24,6 +27,10 @@ package: build
 stream: build
 	substreams run -e $(ENDPOINT) substreams.yaml map_block --start-block $(START_BLOCK) --stop-block $(STOP_BLOCK)
 
+.PHONY: gui
+gui: build
+	substreams gui -e $(ENDPOINT) substreams.yaml map_block --start-block $(START_BLOCK) --stop-block $(STOP_BLOCK)
+
 .PHONY: build-db
 build-db:
 	docker compose up --detach
@@ -35,8 +42,8 @@ remove-db:
 
 .PHONY: sync-db
 sync-db: package
-	# substreams-sink-postgres run $(POSTGRESQL_DSN) $(ENDPOINT) "protofun.spkg" db_out $(START_BLOCK):$(STOP_BLOCK) 
-	substreams-sink-postgres run $(POSTGRESQL_DSN) $(ENDPOINT) "protofun.spkg" db_out
+	substreams-sink-postgres run --flush-interval 1 $(POSTGRESQL_DSN) $(ENDPOINT) "protofun.spkg" db_out $(START_BLOCK):$(STOP_BLOCK) 
+	# substreams-sink-postgres run $(POSTGRESQL_DSN) $(ENDPOINT) "protofun.spkg" db_out
 
 .PHONY: stream_graph
 stream_graph: build

@@ -2,10 +2,59 @@ syntax = "proto3";
 
 package sf.ethereum.block_meta.v1;
 
+message TransactionMeta {
+  string hash = 1;
+  uint64 gas_used = 2;
+  string gas_price = 3;
+  string gas_fee = 4; // derived
+  int32 txn_type = 5;
+  string max_priority_fee_per_gas = 6; 
+  string burned_fee = 7; // derived
+  string miner_tip = 8; // derived
+}
+
 message BlockMeta {
   string hash = 1;
   uint64 number = 2;
   string timestamp = 3;
   uint64 gas_used = 4;
   string base_fee_per_gas = 5;
+  repeated TransactionMeta transactions = 6; // tx position in block is desc
+  string min_gas_price = 7; // derived
+  string max_gas_price = 8; // derived
+  string gas_fees = 9; // derived: aggregate txs.gas_fee
+  string burned_fees = 10; // derived: aggregate txs.burned_fee or base_fee_per_gas * gas_used
+  string miner_tips = 11; // derived: aggregate txs.miner_tip or gas_fees - burned_fees
 }
+
+// hash:                      0x21388ecbf9cf7129ed116dd347c5871338d00ba2866cd6a020f7f308411ec093
+// type =                     2
+// gas_used =                 140943 
+// gas_price =                54.132706524
+// base_fee_per_gas =         54.082706524
+// gas_fee =                  0.007629626055612132 // derived: gas_used * gas_price 
+// burned_fee =               0.007622578905612132 // derived: gas_used * base_fee_per_gas
+// miner_tip =                0.00000704715 // derived: gas_used * max_priority
+// max_priority_fee_per_gas = 0.05
+
+// hash:                      0xe8cdb4d1986b105b77feeef144e013f24ade172b360649a65e617f4b697eada8
+// type =                     0
+// gas_used =                 232300 
+// gas_price =                67.44 
+// base_fee_per_gas =         66.181683695 
+// gas_fee =                  0.015666312 
+// burned_fee =               0.0153740051223485 
+// miner_tip =                0.00029230687 // derived: gas_used * max_priority
+// max_priority_fee_per_gas = 1.258316305 // derived: gas_price - base_fee_per_gas
+
+// hash:                      0x8c67fd449e4192f22b2b8f3b97407ab383c036d41cbe60e67eda49b5750b273f
+// type =                     0
+// gas_used =                 44005 
+// gas_price =                113 
+// base_fee_per_gas =         0 // derived: zero
+// gas_fee =                  0.004972565 // derived: gas_used * gas_price 
+// burned_fee =               0 // derived: zero
+// miner_tip =                0.004972565 // derived: gas_fee 
+// max_priority_fee_per_gas = 113 // derived: gas_price
+
+ 
