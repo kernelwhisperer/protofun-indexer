@@ -1,3 +1,4 @@
 .env.local
 target/
+build/
 protofun.spkg

@@ -42,19 +42,31 @@ remove-db:
 
 .PHONY: sync-db
 sync-db: package
-	substreams-sink-postgres run --flush-interval 1 $(POSTGRESQL_DSN) $(ENDPOINT) "protofun.spkg" db_out $(START_BLOCK):$(STOP_BLOCK) 
+	substreams-sink-postgres run $(POSTGRESQL_DSN) $(ENDPOINT) "protofun.spkg" db_out $(START_BLOCK):$(STOP_BLOCK) 
 	# substreams-sink-postgres run $(POSTGRESQL_DSN) $(ENDPOINT) "protofun.spkg" db_out
 
-.PHONY: stream_graph
-stream_graph: build
+.PHONY: stream-graph
+stream-graph: build
 	substreams run -e $(ENDPOINT) substreams.yaml graph_out  --start-block $(START_BLOCK) --stop-block $(STOP_BLOCK)
 
-.PHONE: deploy_graph_node
-deploy_graph_node: 
-	graph build --ipfs $(IPFS_ENDPOINT) subgraph.yaml
-	# graph create block_meta --node $(GRAPH_NODE_ENDPOINT)
-	# graph deploy --node $(GRAPH_NODE_ENDPOINT) --ipfs $(IPFS_ENDPOINT) --version-label v0.0.1 block_meta subgraph.yaml
+.PHONY: gui-graph
+gui-graph: build
+	substreams gui -e $(ENDPOINT) substreams.yaml graph_out  --start-block $(START_BLOCK) --stop-block $(STOP_BLOCK)
 
-.PHONE: undeploy_graph_node
-undeploy_graph_node:
-	graphman --config "$(GRAPHMAN_CONFIG)" drop --force block_meta
+.PHONE: start-graph-node
+start-graph-node:
+	SUBSTREAMS_ENDPOINT=https://$(ENDPOINT) ./graph-node/up.sh
+
+.PHONY: remove-graph-node
+remove-graph-node:
+	./graph-node/down.sh
+
+.PHONE: deploy-graph
+deploy-graph: package
+	graph build --ipfs $(IPFS_ENDPOINT) subgraph.yaml
+	graph create protofun_block_meta --node $(GRAPH_NODE_ENDPOINT)
+	graph deploy --node $(GRAPH_NODE_ENDPOINT) --ipfs $(IPFS_ENDPOINT) --version-label v0.1.0 protofun_block_meta subgraph.yaml
+
+.PHONE: undeploy-graph
+undeploy-graph:
+	docker exec graph-node graphman drop --force protofun_block_meta

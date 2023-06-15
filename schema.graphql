@@ -1,8 +1,8 @@
 type BlockMeta @entity {
     id: ID!
-    at: String!
     number: BigInt!
-    hash: Bytes!
-    parent_hash: Bytes!
+    hash: String!
+    gas_used: BigInt!
+    base_fee_per_gas: String!
     timestamp: String!
 }
