@@ -25,7 +25,7 @@ services:
     image: sosedoff/pgweb:0.11.12
     restart: on-failure
     ports:
-      - "8000:8081"
+      - "8005:8081"
     command: ["pgweb", "--bind=0.0.0.0", "--listen=8081", "--binary-codec=hex"]
     links:
       - postgres:postgres

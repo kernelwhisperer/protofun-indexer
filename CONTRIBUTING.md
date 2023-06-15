@@ -28,8 +28,11 @@
 3. Environment deps
 
     ```bash
-    npm install -g @bufbuild/buf
-    buff --version # 1.15.0
+    <!-- npm install -g @bufbuild/buf -->
+    <!-- buf --version # 1.15.0 -->
+    curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v23.2/protoc-23.2-linux-x86_64.zip
+    unzip protoc-23.2-linux-x86_64.zip -d $HOME/.local
+    protoc --version # libprotoc 23.2
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh # install rust
     rustc --version # rustc 1.68.2 (9eb3afe9e 2023-03-27) after adding to $PATH
     rustup target add wasm32-unknown-unknown
@@ -42,7 +45,7 @@
 
     ```bash
     npm install -g @graphprotocol/graph-cli
-    graph --version # @graphprotocol/graph-cli/0.49.0 wsl-x64 node-v16.13.2
+    graph --version # @graphprotocol/graph-cli/0.51.0 wsl-x64 node-v20.2.0
     npm install -g go-ipfs
     ipfs --version # ipfs version 0.20.0
     ipfs daemon
