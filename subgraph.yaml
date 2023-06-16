@@ -1,12 +1,12 @@
 specVersion: 0.0.6
-description: Ethereum gas data
+description: Ethereum blocks and txns enriched with gas metadata
 repository: https://github.com/kernelwhisperer/protofun
 schema:
   file: ./schema.graphql
 
 dataSources:
   - kind: substreams
-    name: blockMeta
+    name: blocks_and_txns
     network: mainnet
     source:
       package:

@@ -157,7 +157,7 @@ fn store_block_meta(block: eth::v2::Block, store: StoreSetIfNotExistsProto<Block
 #[substreams::handlers::map]
 pub fn db_out(block_meta: store::Deltas<DeltaProto<BlockMeta>>) -> Result<DatabaseChanges, Error> {
     let mut tables = substreams_database_change::tables::Tables::new();
-    db_out::block_meta_to_database_changes(&mut tables, block_meta);
+    db_out::block_meta_to_tables(&mut tables, block_meta);
 
     Ok(tables.to_database_changes())
 }
@@ -165,7 +165,7 @@ pub fn db_out(block_meta: store::Deltas<DeltaProto<BlockMeta>>) -> Result<Databa
 #[substreams::handlers::map]
 pub fn graph_out(block_meta: store::Deltas<DeltaProto<BlockMeta>>) -> Result<EntityChanges, Error> {
     let mut tables = substreams_entity_change::tables::Tables::new();
-    graph_out::block_meta_to_entities_changes(&mut tables, block_meta);
+    graph_out::block_meta_to_tables(&mut tables, block_meta);
 
     Ok(tables.to_entity_changes())
 }
