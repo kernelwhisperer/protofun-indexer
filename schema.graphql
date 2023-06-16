@@ -1,28 +1,28 @@
+type Block @entity {
+  id: String! # TODO: to bytes
+  number: BigInt!
+  timestamp: String! # TODO
+  gasUsed: BigInt!
+  baseFeePerGas: String! # TODO
+  transactions: [Txn!]! @derivedFrom(field: "block")
+  minGasPrice: String! # TODO
+  maxGasPrice: String! # TODO
+  gasFees: String! # TODO
+  burnedFees: String! # TODO
+  minerTips: String! # TODO
+}
+
 type Txn @entity(immutable: true) {
   id: String! # TODO: to bytes
-  block_number: BigInt!
+  blockNumber: BigInt!
   block: Block!
   #   index: String! # TODO
   #   timestamp: String! # TODO
-  gas_used: BigInt!
-  gas_price: String! # TODO
-  gas_fee: String! # TODO
-  txn_type: Int!
-  max_priority_fee_per_gas: String! # TODO
-  burned_fee: String! # TODO
-  miner_tip: String! # TODO
-}
-
-type Block @entity {
-  id: String!
-  number: BigInt!
-  timestamp: String! # TODO
-  gas_used: BigInt!
-  base_fee_per_gas: String! # TODO
-  transactions: [Txn!]! @derivedFrom(field: "block")
-  min_gas_price: String! # TODO
-  max_gas_price: String! # TODO
-  gas_fees: String! # TODO
-  burned_fees: String! # TODO
-  miner_tips: String! # TODO
+  gasUsed: BigInt!
+  gasPrice: String! # TODO
+  gasFee: String! # TODO
+  txnType: Int!
+  maxPriorityFeePerGas: String! # TODO
+  burnedFee: String! # TODO
+  minerTip: String! # TODO
 }

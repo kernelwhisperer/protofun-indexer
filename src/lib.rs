@@ -51,7 +51,7 @@ fn map_block_to_meta(block: eth::v2::Block) -> BlockMeta {
     let transactions: Vec<TransactionMeta> = block
         .transactions()
         .map(|tx| {
-            let hash = Hex(&tx.hash).to_string();
+            let hash = format!("0x{}", Hex(&tx.hash).to_string());
             substreams::log::info!("tx hash {}", hash);
 
             // Because of MEV, this can be 0.
@@ -128,7 +128,7 @@ fn map_block_to_meta(block: eth::v2::Block) -> BlockMeta {
         .collect();
 
     BlockMeta {
-        hash: Hex(&block.hash).to_string(),
+        hash: format!("0x{}", Hex(&block.hash).to_string()),
         number: block.number,
         timestamp: header.timestamp.as_ref().unwrap().to_string(),
         gas_used: header.gas_used,

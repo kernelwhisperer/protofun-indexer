@@ -20,14 +20,14 @@ fn push_create(tables: &mut Tables, value: BlockMeta) {
     tables
         .create_row("Block", value.hash.clone())
         .set("number", value.number)
-        .set("gas_used", value.gas_used)
-        .set("base_fee_per_gas", value.base_fee_per_gas)
+        .set("gasUsed", value.gas_used)
+        .set("baseFeePerGas", value.base_fee_per_gas)
         .set("timestamp", value.timestamp)
-        .set("min_gas_price", value.min_gas_price)
-        .set("max_gas_price", value.max_gas_price)
-        .set("burned_fees", value.burned_fees)
-        .set("gas_fees", value.gas_fees)
-        .set("miner_tips", value.miner_tips);
+        .set("minGasPrice", value.min_gas_price)
+        .set("maxGasPrice", value.max_gas_price)
+        .set("burnedFees", value.burned_fees)
+        .set("gasFees", value.gas_fees)
+        .set("minerTips", value.miner_tips);
 
     for tx in value.transactions {
         push_tx_meta_create(tables, value.number, value.hash.clone(), &tx);
@@ -37,14 +37,15 @@ fn push_create(tables: &mut Tables, value: BlockMeta) {
 fn push_update(tables: &mut Tables, old_value: BlockMeta, new_value: BlockMeta) {
     tables
         .update_row("Block", new_value.hash.clone())
-        .set("gas_used", new_value.gas_used)
-        .set("base_fee_per_gas", new_value.base_fee_per_gas)
+        .set("number", new_value.number)
+        .set("gasUsed", new_value.gas_used)
+        .set("baseFeePerGas", new_value.base_fee_per_gas)
         .set("timestamp", new_value.timestamp)
-        .set("min_gas_price", new_value.min_gas_price)
-        .set("max_gas_price", new_value.max_gas_price)
-        .set("burned_fees", new_value.burned_fees)
-        .set("gas_fees", new_value.gas_fees)
-        .set("miner_tips", new_value.miner_tips);
+        .set("minGasPrice", new_value.min_gas_price)
+        .set("maxGasPrice", new_value.max_gas_price)
+        .set("burnedFees", new_value.burned_fees)
+        .set("gasFees", new_value.gas_fees)
+        .set("minerTips", new_value.miner_tips);
 
     // Delete transactions from the old block
     for tx in old_value.transactions {
@@ -65,16 +66,16 @@ fn push_tx_meta_create(
 ) {
     tables
         .create_row("Txn", tx.hash.clone())
-        .set("block_number", block_number)
+        .set("blockNumber", block_number)
         .set("block", block_hash)
-        .set("gas_used", tx.gas_used)
-        .set("gas_price", tx.gas_price.clone())
-        .set("gas_fee", tx.gas_fee.clone())
-        .set("txn_type", tx.txn_type)
+        .set("gasUsed", tx.gas_used)
+        .set("gasPrice", tx.gas_price.clone())
+        .set("gasFee", tx.gas_fee.clone())
+        .set("txnType", tx.txn_type)
         .set(
-            "max_priority_fee_per_gas",
+            "maxPriorityFeePerGas",
             tx.max_priority_fee_per_gas.clone(),
         )
-        .set("burned_fee", tx.burned_fee.clone())
-        .set("miner_tip", tx.miner_tip.clone());
+        .set("burnedFee", tx.burned_fee.clone())
+        .set("minerTip", tx.miner_tip.clone());
 }
