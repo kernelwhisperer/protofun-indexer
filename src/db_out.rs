@@ -2,6 +2,7 @@ use substreams::store::{self, DeltaProto};
 use substreams_database_change::tables::Tables;
 
 use crate::pb::sf::ethereum::block_meta::v1::{BlockMeta, TransactionMeta};
+use substreams::{scalar::BigInt, Hex};
 
 // TESTME: with snapshots
 pub fn block_meta_to_tables(tables: &mut Tables, deltas: store::Deltas<DeltaProto<BlockMeta>>) {
@@ -50,7 +51,7 @@ fn push_update(tables: &mut Tables, key: &str, old_value: BlockMeta, new_value: 
 
     // Delete transactions from the old block
     for tx in old_value.transactions {
-        tables.delete_row("transactions", tx.hash.clone());
+        tables.delete_row("transactions", Hex(tx.hash).to_string());
     }
 
     // Create transactions from the new block
@@ -61,7 +62,7 @@ fn push_update(tables: &mut Tables, key: &str, old_value: BlockMeta, new_value: 
 
 fn push_tx_meta_create(tables: &mut Tables, block_number: u64, tx: &TransactionMeta) {
     tables
-        .create_row("transactions", tx.hash.clone())
+        .create_row("transactions", Hex(tx.hash.clone()).to_string())
         .set("hash", tx.hash.clone())
         .set("block_number", block_number)
         .set("gas_used", tx.gas_used)

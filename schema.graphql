@@ -1,28 +1,31 @@
+# https://thegraph.com/docs/en/developing/creating-a-subgraph/#built-in-scalar-types
+
 type Block @entity {
-  id: String! # TODO: to bytes
+  id: Bytes!
   number: BigInt!
-  timestamp: String! # TODO
+  timestamp: String!
   gasUsed: BigInt!
-  baseFeePerGas: String! # TODO
-  transactions: [Txn!]! @derivedFrom(field: "block")
-  minGasPrice: String! # TODO
-  maxGasPrice: String! # TODO
-  gasFees: String! # TODO
-  burnedFees: String! # TODO
-  minerTips: String! # TODO
+  baseFeePerGas: BigInt!
+  txns: [Txn!]! @derivedFrom(field: "block")
+  # txnsCount # TODO
+  minGasPrice: BigInt!
+  maxGasPrice: BigInt!
+  gasFees: BigInt!
+  burnedFees: BigInt!
+  minerTips: BigInt!
 }
 
 type Txn @entity(immutable: true) {
-  id: String! # TODO: to bytes
+  id: Bytes!
   blockNumber: BigInt!
   block: Block!
   #   index: String! # TODO
   #   timestamp: String! # TODO
   gasUsed: BigInt!
-  gasPrice: String! # TODO
-  gasFee: String! # TODO
+  gasPrice: BigInt!
+  gasFee: BigInt!
   txnType: Int!
-  maxPriorityFeePerGas: String! # TODO
-  burnedFee: String! # TODO
-  minerTip: String! # TODO
+  maxPriorityFeePerGas: BigInt!
+  burnedFee: BigInt!
+  minerTip: BigInt!
 }

@@ -2,6 +2,7 @@ use substreams::store::{self, DeltaProto};
 use substreams_entity_change::tables::Tables;
 
 use crate::pb::sf::ethereum::block_meta::v1::{BlockMeta, TransactionMeta};
+use substreams::{scalar::BigInt, Hex};
 
 pub fn block_meta_to_tables(tables: &mut Tables, deltas: store::Deltas<DeltaProto<BlockMeta>>) {
     use substreams::pb::substreams::store_delta::Operation;
@@ -18,25 +19,30 @@ pub fn block_meta_to_tables(tables: &mut Tables, deltas: store::Deltas<DeltaProt
 
 fn push_create(tables: &mut Tables, value: BlockMeta) {
     tables
-        .create_row("Block", value.hash.clone())
+        .create_row("Block", Hex(value.hash.clone()).to_string())
         .set("number", value.number)
         .set("gasUsed", value.gas_used)
-        .set("baseFeePerGas", value.base_fee_per_gas)
+        .set("baseFeePerGas", BigInt::from_unsigned_bytes_be(&value.base_fee_per_gas))
         .set("timestamp", value.timestamp)
-        .set("minGasPrice", value.min_gas_price)
-        .set("maxGasPrice", value.max_gas_price)
-        .set("burnedFees", value.burned_fees)
-        .set("gasFees", value.gas_fees)
-        .set("minerTips", value.miner_tips);
+        .set("minGasPrice", BigInt::from_unsigned_bytes_be(&value.min_gas_price))
+        .set("maxGasPrice", BigInt::from_unsigned_bytes_be(&value.max_gas_price))
+        .set("burnedFees", BigInt::from_unsigned_bytes_be(&value.burned_fees))
+        .set("gasFees", BigInt::from_unsigned_bytes_be(&value.gas_fees))
+        .set("minerTips", BigInt::from_unsigned_bytes_be(&value.miner_tips));
 
     for tx in value.transactions {
-        push_tx_meta_create(tables, value.number, value.hash.clone(), &tx);
+        push_tx_meta_create(
+            tables,
+            value.number,
+            value.hash.clone(),
+            &tx,
+        );
     }
 }
 
 fn push_update(tables: &mut Tables, old_value: BlockMeta, new_value: BlockMeta) {
     tables
-        .update_row("Block", new_value.hash.clone())
+        .update_row("Block", Hex(new_value.hash.clone()).to_string())
         .set("number", new_value.number)
         .set("gasUsed", new_value.gas_used)
         .set("baseFeePerGas", new_value.base_fee_per_gas)
@@ -49,33 +55,38 @@ fn push_update(tables: &mut Tables, old_value: BlockMeta, new_value: BlockMeta) 
 
     // Delete transactions from the old block
     for tx in old_value.transactions {
-        tables.delete_row("transactions", tx.hash.clone());
+        tables.delete_row("transactions", Hex(tx.hash).to_string());
     }
 
     // Create transactions from the new block
     for tx in new_value.transactions {
-        push_tx_meta_create(tables, new_value.number, new_value.hash.clone(), &tx);
+        push_tx_meta_create(
+            tables,
+            new_value.number,
+            new_value.hash.clone(),
+            &tx,
+        );
     }
 }
 
 fn push_tx_meta_create(
     tables: &mut Tables,
     block_number: u64,
-    block_hash: String,
+    block_hash: Vec<u8>,
     tx: &TransactionMeta,
 ) {
     tables
-        .create_row("Txn", tx.hash.clone())
+        .create_row("Txn", Hex(tx.hash.clone()).to_string())
         .set("blockNumber", block_number)
         .set("block", block_hash)
         .set("gasUsed", tx.gas_used)
-        .set("gasPrice", tx.gas_price.clone())
-        .set("gasFee", tx.gas_fee.clone())
+        .set("gasPrice", BigInt::from_unsigned_bytes_be(&tx.gas_price))
+        .set("gasFee", BigInt::from_unsigned_bytes_be(&tx.gas_fee))
         .set("txnType", tx.txn_type)
         .set(
             "maxPriorityFeePerGas",
-            tx.max_priority_fee_per_gas.clone(),
+            BigInt::from_unsigned_bytes_be(&tx.max_priority_fee_per_gas),
         )
-        .set("burnedFee", tx.burned_fee.clone())
-        .set("minerTip", tx.miner_tip.clone());
+        .set("burnedFee", BigInt::from_unsigned_bytes_be(&tx.burned_fee))
+        .set("minerTip", BigInt::from_unsigned_bytes_be(&tx.miner_tip));
 }

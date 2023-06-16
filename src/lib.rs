@@ -2,7 +2,7 @@ mod pb;
 
 use pb::sf::ethereum::block_meta::v1::{BlockMeta, TransactionMeta};
 
-use substreams::{scalar::BigInt, Hex};
+use substreams::scalar::BigInt;
 use substreams_ethereum::pb::eth;
 // use substreams_ethereum::pb::eth::v2::transaction_trace::Type;
 
@@ -29,12 +29,6 @@ fn map_block_to_meta(block: eth::v2::Block) -> BlockMeta {
     let base_fee_per_gas = BigInt::from_unsigned_bytes_be(&base_fee_per_gas_bytes);
     let is_london_fork = base_fee_per_gas_bytes.len() != 0;
 
-    let base_fee_per_gas_string = if is_london_fork {
-        base_fee_per_gas.to_string()
-    } else {
-        "".to_string()
-    };
-
     substreams::log::info!(
         "tx len {} block {}",
         block.transaction_traces.len(),
@@ -51,15 +45,14 @@ fn map_block_to_meta(block: eth::v2::Block) -> BlockMeta {
     let transactions: Vec<TransactionMeta> = block
         .transactions()
         .map(|tx| {
-            let hash = format!("0x{}", Hex(&tx.hash).to_string());
-            substreams::log::info!("tx hash {}", hash);
+            // let hash = format!("0x{}", Hex(&tx.hash).to_string());
+            // substreams::log::info!("tx hash {}", hash);
 
             // Because of MEV, this can be 0.
             // E.g.: 0x15614894a056159334f52b791611ca49e8874d0494cec1414b39fec1bf4f5156
             let gas_price = BigInt::from_unsigned_bytes_be(
                 tx.gas_price.as_ref().map_or(&vec![0], |x| &x.bytes),
             );
-            let gas_price_str = gas_price.to_string();
             let gas_used = BigInt::from(tx.gas_used);
             let gas_fee = gas_price.clone() * gas_used.clone();
 
@@ -67,11 +60,6 @@ fn map_block_to_meta(block: eth::v2::Block) -> BlockMeta {
                 base_fee_per_gas.clone() * gas_used.clone()
             } else {
                 BigInt::from(0)
-            };
-            let burned_fee_str = if is_london_fork {
-                burned_fee.to_string()
-            } else {
-                "".to_string()
             };
 
             let max_priority_fee_per_gas = if !is_london_fork {
@@ -98,7 +86,7 @@ fn map_block_to_meta(block: eth::v2::Block) -> BlockMeta {
             gas_fees = gas_fees.clone() + gas_fee.clone();
             miner_tips = miner_tips.clone() + miner_tip.clone();
             if is_london_fork {
-                burned_fees = burned_fees.clone() + burned_fee
+                burned_fees = burned_fees.clone() + burned_fee.clone()
             }
             if comparison_started == false {
                 comparison_started = true;
@@ -115,30 +103,31 @@ fn map_block_to_meta(block: eth::v2::Block) -> BlockMeta {
             }
 
             TransactionMeta {
-                hash,
+                hash: tx.hash.clone(),
                 gas_used: tx.gas_used,
-                gas_price: gas_price_str,
-                gas_fee: gas_fee.to_string(),
+                gas_price: gas_price.to_bytes_be().1,
+                gas_fee: gas_fee.to_bytes_be().1,
                 txn_type: tx.r#type,
-                max_priority_fee_per_gas: max_priority_fee_per_gas.to_string(),
-                burned_fee: burned_fee_str,
-                miner_tip: miner_tip.to_string(),
+                max_priority_fee_per_gas: max_priority_fee_per_gas.to_bytes_be().1,
+                burned_fee: burned_fee.to_bytes_be().1,
+                miner_tip: miner_tip.to_bytes_be().1,
             }
         })
         .collect();
 
     BlockMeta {
-        hash: format!("0x{}", Hex(&block.hash).to_string()),
+        // hash: format!("0x{}", Hex(&block.hash).to_string()),
+        hash: block.hash,
         number: block.number,
         timestamp: header.timestamp.as_ref().unwrap().to_string(),
         gas_used: header.gas_used,
-        base_fee_per_gas: base_fee_per_gas_string,
+        base_fee_per_gas: base_fee_per_gas.to_bytes_be().1,
         transactions,
-        min_gas_price: min_gas_price.to_string(), // TODO: move from string to bytes
-        max_gas_price: max_gas_price.to_string(),
-        burned_fees: burned_fees.to_string(),
-        gas_fees: gas_fees.to_string(),
-        miner_tips: miner_tips.to_string(),
+        min_gas_price: min_gas_price.to_bytes_be().1,
+        max_gas_price: max_gas_price.to_bytes_be().1,
+        burned_fees: burned_fees.to_bytes_be().1,
+        gas_fees: gas_fees.to_bytes_be().1,
+        miner_tips: miner_tips.to_bytes_be().1,
     }
 }
 
