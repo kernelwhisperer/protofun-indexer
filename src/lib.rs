@@ -157,8 +157,8 @@ pub fn db_out(block_meta: store::Deltas<DeltaProto<BlockMeta>>) -> Result<Databa
 
 #[substreams::handlers::map]
 pub fn graph_out(block_meta: store::Deltas<DeltaProto<BlockMeta>>) -> Result<EntityChanges, Error> {
-    let mut entity_changes: EntityChanges = Default::default();
-    graph_out::block_meta_to_entities_changes(&mut entity_changes, block_meta);
+    let mut tables = substreams_entity_change::tables::Tables::new();
+    graph_out::block_meta_to_entities_changes(&mut tables, block_meta);
 
-    Ok(entity_changes)
+    Ok(tables.to_entity_changes())
 }

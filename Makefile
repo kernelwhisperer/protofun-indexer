@@ -1,10 +1,9 @@
 ENDPOINT ?= mainnet.eth.streamingfast.io:443
 POSTGRESQL_DSN ?= psql://daniel:toor@localhost:5432/protofun?sslmode=disable
 
-# START_BLOCK ?= 12965000
-# STOP_BLOCK  ?= 12965010
-START_BLOCK ?= 12964995
-STOP_BLOCK  ?= 12965005
+START_BLOCK ?= 17491129
+STOP_BLOCK  ?= 17491131
+# START_BLOCK ?= 12964995
 # STOP_BLOCK  ?= 12965005
 
 IPFS_ENDPOINT ?= http://127.0.0.1:5001
