@@ -35,7 +35,11 @@ fn map_block_to_meta(block: eth::v2::Block) -> BlockMeta {
         "".to_string()
     };
 
-    substreams::log::info!("tx len {} block {}", block.transaction_traces.len(), block.number);
+    substreams::log::info!(
+        "tx len {} block {}",
+        block.transaction_traces.len(),
+        block.number
+    );
 
     let mut gas_fees = BigInt::from(0);
     let mut miner_tips = BigInt::from(0);
@@ -74,9 +78,12 @@ fn map_block_to_meta(block: eth::v2::Block) -> BlockMeta {
                 gas_price.clone()
             } else if tx.r#type == 2 {
                 // TODO: use Type::TrxTypeDynamicFee enum
-                BigInt::from_unsigned_bytes_be(&tx.max_priority_fee_per_gas.as_ref().unwrap_or(&substreams_ethereum::pb::eth::v2::BigInt{
-                    bytes: Vec::new()
-                }).bytes)
+                BigInt::from_unsigned_bytes_be(
+                    &tx.max_priority_fee_per_gas
+                        .as_ref()
+                        .unwrap_or(&substreams_ethereum::pb::eth::v2::BigInt { bytes: Vec::new() })
+                        .bytes,
+                )
             } else {
                 gas_price.clone() - base_fee_per_gas.clone()
             };
@@ -125,7 +132,7 @@ fn map_block_to_meta(block: eth::v2::Block) -> BlockMeta {
         number: block.number,
         timestamp: header.timestamp.as_ref().unwrap().to_string(),
         gas_used: header.gas_used,
-        base_fee_per_gas: base_fee_per_gas_string, 
+        base_fee_per_gas: base_fee_per_gas_string,
         transactions,
         min_gas_price: min_gas_price.to_string(), // TODO: move from string to bytes
         max_gas_price: max_gas_price.to_string(),
@@ -149,10 +156,10 @@ fn store_block_meta(block: eth::v2::Block, store: StoreSetIfNotExistsProto<Block
 
 #[substreams::handlers::map]
 pub fn db_out(block_meta: store::Deltas<DeltaProto<BlockMeta>>) -> Result<DatabaseChanges, Error> {
-    let mut database_changes: DatabaseChanges = Default::default();
-    db_out::block_meta_to_database_changes(&mut database_changes, block_meta);
+    let mut tables = substreams_database_change::tables::Tables::new();
+    db_out::block_meta_to_database_changes(&mut tables, block_meta);
 
-    Ok(database_changes)
+    Ok(tables.to_database_changes())
 }
 
 #[substreams::handlers::map]
