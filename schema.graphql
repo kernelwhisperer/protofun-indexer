@@ -3,7 +3,7 @@
 type Block @entity {
   id: Bytes!
   number: BigInt!
-  timestamp: String!
+  timestamp: BigInt!
   gasUsed: BigInt!
   baseFeePerGas: BigInt!
   txns: [Txn!]! @derivedFrom(field: "block")

@@ -119,7 +119,7 @@ fn map_block_to_meta(block: eth::v2::Block) -> BlockMeta {
         // hash: format!("0x{}", Hex(&block.hash).to_string()),
         hash: block.hash,
         number: block.number,
-        timestamp: header.timestamp.as_ref().unwrap().to_string(),
+        timestamp: header.timestamp.as_ref().unwrap().seconds,
         gas_used: header.gas_used,
         base_fee_per_gas: base_fee_per_gas.to_bytes_be().1,
         transactions,

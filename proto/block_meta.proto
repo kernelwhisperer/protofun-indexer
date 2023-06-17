@@ -16,7 +16,7 @@ message TransactionMeta {
 message BlockMeta {
   bytes hash = 1;
   uint64 number = 2;
-  string timestamp = 3;
+  int64 timestamp = 3;
   uint64 gas_used = 4;
   bytes base_fee_per_gas = 5;
   repeated TransactionMeta transactions = 6; // tx position in block is desc
