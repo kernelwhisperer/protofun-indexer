@@ -27,6 +27,8 @@ fn push_create(tables: &mut Tables, value: BlockMeta) {
         .set("txnCount", value.txn_count)
         .set("minGasPrice", BigInt::from_unsigned_bytes_be(&value.min_gas_price))
         .set("maxGasPrice", BigInt::from_unsigned_bytes_be(&value.max_gas_price))
+        .set("firstGasPrice", BigInt::from_unsigned_bytes_be(&value.first_gas_price))
+        .set("lastGasPrice", BigInt::from_unsigned_bytes_be(&value.last_gas_price))
         .set("burnedFees", BigInt::from_unsigned_bytes_be(&value.burned_fees))
         .set("gasFees", BigInt::from_unsigned_bytes_be(&value.gas_fees))
         .set("minerTips", BigInt::from_unsigned_bytes_be(&value.miner_tips));
@@ -51,6 +53,8 @@ fn push_update(tables: &mut Tables, old_value: BlockMeta, new_value: BlockMeta) 
         .set("txnCount", new_value.txn_count)
         .set("minGasPrice", new_value.min_gas_price)
         .set("maxGasPrice", new_value.max_gas_price)
+        .set("firstGasPrice", BigInt::from_unsigned_bytes_be(&new_value.first_gas_price))
+        .set("lastGasPrice", BigInt::from_unsigned_bytes_be(&new_value.last_gas_price))
         .set("burnedFees", new_value.burned_fees)
         .set("gasFees", new_value.gas_fees)
         .set("minerTips", new_value.miner_tips);

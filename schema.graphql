@@ -10,6 +10,8 @@ type Block @entity {
   txnCount: Int!
   minGasPrice: BigInt!
   maxGasPrice: BigInt!
+  firstGasPrice: BigInt!
+  lastGasPrice: BigInt!
   gasFees: BigInt!
   burnedFees: BigInt!
   minerTips: BigInt!

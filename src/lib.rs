@@ -124,6 +124,14 @@ fn map_block_to_meta(block: eth::v2::Block) -> BlockMeta {
         })
         .collect();
 
+    let mut first_gas_price = vec![0];
+    let mut last_gas_price = vec![0];
+
+    if txns.len() != 0 {
+        first_gas_price = txns[0].gas_price.clone();
+        last_gas_price = txns[txns.len() - 1].gas_price.clone();
+    }
+
     BlockMeta {
         hash: block.hash,
         number: block.number,
@@ -134,6 +142,8 @@ fn map_block_to_meta(block: eth::v2::Block) -> BlockMeta {
         txn_count: block.transaction_traces.len() as i32,
         min_gas_price: min_gas_price.to_bytes_be().1,
         max_gas_price: max_gas_price.to_bytes_be().1,
+        first_gas_price,
+        last_gas_price,
         burned_fees: burned_fees.to_bytes_be().1,
         gas_fees: gas_fees.to_bytes_be().1,
         miner_tips: miner_tips.to_bytes_be().1,

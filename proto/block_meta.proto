@@ -28,6 +28,8 @@ message BlockMeta {
   bytes burned_fees = 10; // derived: aggregate txs.burned_fee or base_fee_per_gas * gas_used
   bytes miner_tips = 11; // derived: aggregate txs.miner_tip or gas_fees - burned_fees
   int32 txn_count = 12;
+  bytes first_gas_price = 13; // derived
+  bytes last_gas_price = 14; // derived
 }
 
 // hash:                      0x21388ecbf9cf7129ed116dd347c5871338d00ba2866cd6a020f7f308411ec093
