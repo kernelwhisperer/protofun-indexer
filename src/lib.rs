@@ -16,6 +16,7 @@ use substreams::store::{DeltaProto, StoreSetIfNotExistsProto};
 use substreams::{prelude::*, store};
 use substreams_database_change::pb::database::DatabaseChanges;
 use substreams_entity_change::pb::entity::EntityChanges;
+use substreams_ethereum::pb::eth::v2::TransactionTrace;
 
 fn map_block_to_meta(block: eth::v2::Block) -> BlockMeta {
     let header = block.header.as_ref().unwrap();
@@ -29,11 +30,13 @@ fn map_block_to_meta(block: eth::v2::Block) -> BlockMeta {
     let base_fee_per_gas = BigInt::from_unsigned_bytes_be(&base_fee_per_gas_bytes);
     let is_london_fork = base_fee_per_gas_bytes.len() != 0;
 
-    substreams::log::info!(
-        "tx len {} block {}",
-        block.transaction_traces.len(),
-        block.number
-    );
+    // substreams::log::info!(
+    //     "tx len {} block {}",
+    //     block.transaction_traces.len(),
+    //     block.number
+    // );
+
+    let timestamp = header.timestamp.as_ref().unwrap().seconds;
 
     let mut gas_fees = BigInt::from(0);
     let mut miner_tips = BigInt::from(0);
@@ -42,9 +45,13 @@ fn map_block_to_meta(block: eth::v2::Block) -> BlockMeta {
     let mut max_gas_price: BigInt = BigInt::from(0);
     let mut comparison_started = false;
 
-    let transactions: Vec<TransactionMeta> = block
-        .transactions()
-        .map(|tx| {
+    let transactions: Vec<&TransactionTrace> = block.transactions().collect();
+
+    let txns: Vec<TransactionMeta> = transactions
+        .into_iter()
+        .rev()
+        .enumerate()
+        .map(|(index, tx)| {
             // let hash = format!("0x{}", Hex(&tx.hash).to_string());
             // substreams::log::info!("tx hash {}", hash);
 
@@ -108,6 +115,8 @@ fn map_block_to_meta(block: eth::v2::Block) -> BlockMeta {
                 gas_price: gas_price.to_bytes_be().1,
                 gas_fee: gas_fee.to_bytes_be().1,
                 txn_type: tx.r#type,
+                timestamp,
+                index: index as i32,
                 max_priority_fee_per_gas: max_priority_fee_per_gas.to_bytes_be().1,
                 burned_fee: burned_fee.to_bytes_be().1,
                 miner_tip: miner_tip.to_bytes_be().1,
@@ -116,13 +125,13 @@ fn map_block_to_meta(block: eth::v2::Block) -> BlockMeta {
         .collect();
 
     BlockMeta {
-        // hash: format!("0x{}", Hex(&block.hash).to_string()),
         hash: block.hash,
         number: block.number,
-        timestamp: header.timestamp.as_ref().unwrap().seconds,
+        timestamp,
         gas_used: header.gas_used,
         base_fee_per_gas: base_fee_per_gas.to_bytes_be().1,
-        transactions,
+        txns,
+        txn_count: block.transaction_traces.len() as i32,
         min_gas_price: min_gas_price.to_bytes_be().1,
         max_gas_price: max_gas_price.to_bytes_be().1,
         burned_fees: burned_fees.to_bytes_be().1,

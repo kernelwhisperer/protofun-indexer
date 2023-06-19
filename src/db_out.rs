@@ -31,7 +31,7 @@ fn push_create(tables: &mut Tables, key: &str, value: BlockMeta) {
         .set("gas_fees", value.gas_fees)
         .set("miner_tips", value.miner_tips);
 
-    for tx in value.transactions {
+    for tx in value.txns {
         push_tx_meta_create(tables, value.number, &tx);
     }
 }
@@ -50,12 +50,12 @@ fn push_update(tables: &mut Tables, key: &str, old_value: BlockMeta, new_value: 
         .set("miner_tips", new_value.miner_tips);
 
     // Delete transactions from the old block
-    for tx in old_value.transactions {
+    for tx in old_value.txns {
         tables.delete_row("transactions", Hex(tx.hash).to_string());
     }
 
     // Create transactions from the new block
-    for tx in new_value.transactions {
+    for tx in new_value.txns {
         push_tx_meta_create(tables, new_value.number, &tx);
     }
 }

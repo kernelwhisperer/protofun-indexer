@@ -11,6 +11,8 @@ message TransactionMeta {
   bytes max_priority_fee_per_gas = 6; 
   bytes burned_fee = 7; // derived
   bytes miner_tip = 8; // derived
+  int64 timestamp = 9;
+  int32 index = 10;
 }
 
 message BlockMeta {
@@ -19,12 +21,13 @@ message BlockMeta {
   int64 timestamp = 3;
   uint64 gas_used = 4;
   bytes base_fee_per_gas = 5;
-  repeated TransactionMeta transactions = 6; // tx position in block is desc
+  repeated TransactionMeta txns = 6;
   bytes min_gas_price = 7; // derived
   bytes max_gas_price = 8; // derived
   bytes gas_fees = 9; // derived: aggregate txs.gas_fee
   bytes burned_fees = 10; // derived: aggregate txs.burned_fee or base_fee_per_gas * gas_used
   bytes miner_tips = 11; // derived: aggregate txs.miner_tip or gas_fees - burned_fees
+  int32 txn_count = 12;
 }
 
 // hash:                      0x21388ecbf9cf7129ed116dd347c5871338d00ba2866cd6a020f7f308411ec093

@@ -7,7 +7,7 @@ type Block @entity {
   gasUsed: BigInt!
   baseFeePerGas: BigInt!
   txns: [Txn!]! @derivedFrom(field: "block")
-  # txnsCount # TODO
+  txnCount: Int!
   minGasPrice: BigInt!
   maxGasPrice: BigInt!
   gasFees: BigInt!
@@ -19,8 +19,8 @@ type Txn @entity(immutable: true) {
   id: Bytes!
   blockNumber: BigInt!
   block: Block!
-  #   index: String! # TODO
-  #   timestamp: String! # TODO
+  index: Int!
+  timestamp: BigInt!
   gasUsed: BigInt!
   gasPrice: BigInt!
   gasFee: BigInt!

@@ -24,13 +24,14 @@ fn push_create(tables: &mut Tables, value: BlockMeta) {
         .set("gasUsed", value.gas_used)
         .set("baseFeePerGas", BigInt::from_unsigned_bytes_be(&value.base_fee_per_gas))
         .set("timestamp", value.timestamp)
+        .set("txnCount", value.txn_count)
         .set("minGasPrice", BigInt::from_unsigned_bytes_be(&value.min_gas_price))
         .set("maxGasPrice", BigInt::from_unsigned_bytes_be(&value.max_gas_price))
         .set("burnedFees", BigInt::from_unsigned_bytes_be(&value.burned_fees))
         .set("gasFees", BigInt::from_unsigned_bytes_be(&value.gas_fees))
         .set("minerTips", BigInt::from_unsigned_bytes_be(&value.miner_tips));
 
-    for tx in value.transactions {
+    for tx in value.txns {
         push_tx_meta_create(
             tables,
             value.number,
@@ -47,6 +48,7 @@ fn push_update(tables: &mut Tables, old_value: BlockMeta, new_value: BlockMeta) 
         .set("gasUsed", new_value.gas_used)
         .set("baseFeePerGas", new_value.base_fee_per_gas)
         .set("timestamp", new_value.timestamp)
+        .set("txnCount", new_value.txn_count)
         .set("minGasPrice", new_value.min_gas_price)
         .set("maxGasPrice", new_value.max_gas_price)
         .set("burnedFees", new_value.burned_fees)
@@ -54,12 +56,12 @@ fn push_update(tables: &mut Tables, old_value: BlockMeta, new_value: BlockMeta) 
         .set("minerTips", new_value.miner_tips);
 
     // Delete transactions from the old block
-    for tx in old_value.transactions {
+    for tx in old_value.txns {
         tables.delete_row("transactions", Hex(tx.hash).to_string());
     }
 
     // Create transactions from the new block
-    for tx in new_value.transactions {
+    for tx in new_value.txns {
         push_tx_meta_create(
             tables,
             new_value.number,
@@ -82,6 +84,8 @@ fn push_tx_meta_create(
         .set("gasUsed", tx.gas_used)
         .set("gasPrice", BigInt::from_unsigned_bytes_be(&tx.gas_price))
         .set("gasFee", BigInt::from_unsigned_bytes_be(&tx.gas_fee))
+        .set("timestamp", tx.timestamp)
+        .set("index", tx.index)
         .set("txnType", tx.txn_type)
         .set(
             "maxPriorityFeePerGas",
