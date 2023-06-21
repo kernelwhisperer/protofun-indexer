@@ -196,57 +196,48 @@ pub fn graph_out(
     Ok(tables.to_entity_changes())
 }
 
+fn get_latest_time_unit(timestamp: i64, interval_in_seconds: i64) -> String {
+    let timestamp_seconds = timestamp;
+    let latest_time_unit = (timestamp_seconds / interval_in_seconds) * interval_in_seconds;
+
+    return latest_time_unit.to_string();
+}
+
 #[substreams::handlers::store]
 fn store_base_fee_per_gas_price_minute_open(
     block_meta: BlockMeta,
     store: StoreSetIfNotExistsBigInt,
 ) {
-    let timestamp_seconds = block_meta.timestamp;
-    let seconds_per_minute = 60;
-    let last_minute = (timestamp_seconds / seconds_per_minute) * seconds_per_minute;
-
     store.set_if_not_exists(
         0,
-        last_minute.to_string(),
+        get_latest_time_unit(block_meta.timestamp, 60),
         &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
     );
 }
 
 #[substreams::handlers::store]
 fn store_base_fee_per_gas_price_minute_low(block_meta: BlockMeta, store: StoreMinBigInt) {
-    let timestamp_seconds = block_meta.timestamp;
-    let seconds_per_minute = 60;
-    let last_minute = (timestamp_seconds / seconds_per_minute) * seconds_per_minute;
-
     store.min(
         0,
-        last_minute.to_string(),
+        get_latest_time_unit(block_meta.timestamp, 60),
         &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
     );
 }
 
 #[substreams::handlers::store]
 fn store_base_fee_per_gas_price_minute_high(block_meta: BlockMeta, store: StoreMaxBigInt) {
-    let timestamp_seconds = block_meta.timestamp;
-    let seconds_per_minute = 60;
-    let last_minute = (timestamp_seconds / seconds_per_minute) * seconds_per_minute;
-
     store.max(
         0,
-        last_minute.to_string(),
+        get_latest_time_unit(block_meta.timestamp, 60),
         &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
     );
 }
 
 #[substreams::handlers::store]
 fn store_base_fee_per_gas_price_minute_close(block_meta: BlockMeta, store: StoreSetBigInt) {
-    let timestamp_seconds = block_meta.timestamp;
-    let seconds_per_minute = 60;
-    let last_minute = (timestamp_seconds / seconds_per_minute) * seconds_per_minute;
-
     store.set(
         0,
-        last_minute.to_string(),
+        get_latest_time_unit(block_meta.timestamp, 60),
         &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
     );
 }
