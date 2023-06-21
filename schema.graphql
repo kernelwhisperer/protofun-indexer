@@ -32,9 +32,10 @@ type Txn @entity(immutable: true) {
   minerTip: BigInt!
 }
 
-type BaseGasMinuteCandle @entity {
+type BaseFeePerGasMinuteCandle @entity {
   id: String!
   timestamp: BigInt!
+  " The highest value of base fee per gas within the minute "
   open: BigInt
   high: BigInt
   low: BigInt

@@ -116,37 +116,34 @@ fn push_tx_meta_create(
         .set("minerTip", BigInt::from_unsigned_bytes_be(&tx.miner_tip));
 }
 
-pub fn base_gas_minute_open_to_tables(tables: &mut Tables, deltas: store::Deltas<DeltaBigInt>) {
-    for delta in deltas.deltas {
+pub fn base_fee_per_gas_minute_to_tables(
+    tables: &mut Tables,
+    open_deltas: store::Deltas<DeltaBigInt>,
+    high_deltas: store::Deltas<DeltaBigInt>,
+    low_deltas: store::Deltas<DeltaBigInt>,
+    close_deltas: store::Deltas<DeltaBigInt>,
+) {
+    for delta in open_deltas.deltas {
         tables
-            .update_row("BaseGasMinuteCandle", delta.key.clone())
+            .update_row("BaseFeePerGasMinuteCandle", delta.key.clone())
             .set("timestamp", delta.key.parse::<i64>().unwrap())
             .set("open", &delta.new_value);
     }
-}
-
-pub fn base_gas_minute_high_to_tables(tables: &mut Tables, deltas: store::Deltas<DeltaBigInt>) {
-    for delta in deltas.deltas {
+    for delta in high_deltas.deltas {
         tables
-            .update_row("BaseGasMinuteCandle", delta.key.clone())
+            .update_row("BaseFeePerGasMinuteCandle", delta.key.clone())
             .set("timestamp", delta.key.parse::<i64>().unwrap())
             .set("high", &delta.new_value);
     }
-}
-
-pub fn base_gas_minute_low_to_tables(tables: &mut Tables, deltas: store::Deltas<DeltaBigInt>) {
-    for delta in deltas.deltas {
+    for delta in low_deltas.deltas {
         tables
-            .update_row("BaseGasMinuteCandle", delta.key.clone())
+            .update_row("BaseFeePerGasMinuteCandle", delta.key.clone())
             .set("timestamp", delta.key.parse::<i64>().unwrap())
             .set("low", &delta.new_value);
     }
-}
-
-pub fn base_gas_minute_close_to_tables(tables: &mut Tables, deltas: store::Deltas<DeltaBigInt>) {
-    for delta in deltas.deltas {
+    for delta in close_deltas.deltas {
         tables
-            .update_row("BaseGasMinuteCandle", delta.key.clone())
+            .update_row("BaseFeePerGasMinuteCandle", delta.key.clone())
             .set("timestamp", delta.key.parse::<i64>().unwrap())
             .set("close", &delta.new_value);
     }
