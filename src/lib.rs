@@ -171,9 +171,76 @@ pub fn db_out(block_meta: store::Deltas<DeltaProto<BlockMeta>>) -> Result<Databa
 }
 
 #[substreams::handlers::map]
-pub fn graph_out(block_meta: store::Deltas<DeltaProto<BlockMeta>>) -> Result<EntityChanges, Error> {
+pub fn graph_out(
+    block_meta: store::Deltas<DeltaProto<BlockMeta>>,
+    base_gas_price_minute_open: store::Deltas<DeltaBigInt>,
+    base_gas_price_minute_high: store::Deltas<DeltaBigInt>,
+    base_gas_price_minute_low: store::Deltas<DeltaBigInt>,
+    base_gas_price_minute_close: store::Deltas<DeltaBigInt>,
+) -> Result<EntityChanges, Error> {
+    // substreams::log::info!(
+    //     "tx len {} block {}",
+    //     block_meta.deltas.len(),
+    //     block.number
+    // );
     let mut tables = substreams_entity_change::tables::Tables::new();
     graph_out::block_meta_to_tables(&mut tables, block_meta);
+    graph_out::base_gas_minute_open_to_tables(&mut tables, base_gas_price_minute_open);
+    graph_out::base_gas_minute_high_to_tables(&mut tables, base_gas_price_minute_high);
+    graph_out::base_gas_minute_low_to_tables(&mut tables, base_gas_price_minute_low);
+    graph_out::base_gas_minute_close_to_tables(&mut tables, base_gas_price_minute_close);
 
     Ok(tables.to_entity_changes())
+}
+
+#[substreams::handlers::store]
+fn store_base_gas_price_minute_open(block_meta: BlockMeta, store: StoreSetIfNotExistsBigInt) {
+    let timestamp_seconds = block_meta.timestamp;
+    let seconds_per_minute = 60;
+    let last_minute = (timestamp_seconds / seconds_per_minute) * seconds_per_minute;
+
+    store.set_if_not_exists(
+        0,
+        last_minute.to_string(),
+        &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
+    );
+}
+
+#[substreams::handlers::store]
+fn store_base_gas_price_minute_low(block_meta: BlockMeta, store: StoreMinBigInt) {
+    let timestamp_seconds = block_meta.timestamp;
+    let seconds_per_minute = 60;
+    let last_minute = (timestamp_seconds / seconds_per_minute) * seconds_per_minute;
+
+    store.min(
+        0,
+        last_minute.to_string(),
+        &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
+    );
+}
+
+#[substreams::handlers::store]
+fn store_base_gas_price_minute_high(block_meta: BlockMeta, store: StoreMaxBigInt) {
+    let timestamp_seconds = block_meta.timestamp;
+    let seconds_per_minute = 60;
+    let last_minute = (timestamp_seconds / seconds_per_minute) * seconds_per_minute;
+
+    store.max(
+        0,
+        last_minute.to_string(),
+        &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
+    );
+}
+
+#[substreams::handlers::store]
+fn store_base_gas_price_minute_close(block_meta: BlockMeta, store: StoreSetBigInt) {
+    let timestamp_seconds = block_meta.timestamp;
+    let seconds_per_minute = 60;
+    let last_minute = (timestamp_seconds / seconds_per_minute) * seconds_per_minute;
+
+    store.set(
+        0,
+        last_minute.to_string(),
+        &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
+    );
 }

@@ -1,4 +1,4 @@
-use substreams::store::{self, DeltaProto};
+use substreams::store::{self, DeltaBigInt, DeltaProto};
 use substreams_entity_change::tables::Tables;
 
 use crate::pb::sf::ethereum::block_meta::v1::{BlockMeta, TransactionMeta};
@@ -22,24 +22,40 @@ fn push_create(tables: &mut Tables, value: BlockMeta) {
         .create_row("Block", Hex(value.hash.clone()).to_string())
         .set("number", value.number)
         .set("gasUsed", value.gas_used)
-        .set("baseFeePerGas", BigInt::from_unsigned_bytes_be(&value.base_fee_per_gas))
+        .set(
+            "baseFeePerGas",
+            BigInt::from_unsigned_bytes_be(&value.base_fee_per_gas),
+        )
         .set("timestamp", value.timestamp)
         .set("txnCount", value.txn_count)
-        .set("minGasPrice", BigInt::from_unsigned_bytes_be(&value.min_gas_price))
-        .set("maxGasPrice", BigInt::from_unsigned_bytes_be(&value.max_gas_price))
-        .set("firstGasPrice", BigInt::from_unsigned_bytes_be(&value.first_gas_price))
-        .set("lastGasPrice", BigInt::from_unsigned_bytes_be(&value.last_gas_price))
-        .set("burnedFees", BigInt::from_unsigned_bytes_be(&value.burned_fees))
+        .set(
+            "minGasPrice",
+            BigInt::from_unsigned_bytes_be(&value.min_gas_price),
+        )
+        .set(
+            "maxGasPrice",
+            BigInt::from_unsigned_bytes_be(&value.max_gas_price),
+        )
+        .set(
+            "firstGasPrice",
+            BigInt::from_unsigned_bytes_be(&value.first_gas_price),
+        )
+        .set(
+            "lastGasPrice",
+            BigInt::from_unsigned_bytes_be(&value.last_gas_price),
+        )
+        .set(
+            "burnedFees",
+            BigInt::from_unsigned_bytes_be(&value.burned_fees),
+        )
         .set("gasFees", BigInt::from_unsigned_bytes_be(&value.gas_fees))
-        .set("minerTips", BigInt::from_unsigned_bytes_be(&value.miner_tips));
+        .set(
+            "minerTips",
+            BigInt::from_unsigned_bytes_be(&value.miner_tips),
+        );
 
     for tx in value.txns {
-        push_tx_meta_create(
-            tables,
-            value.number,
-            value.hash.clone(),
-            &tx,
-        );
+        push_tx_meta_create(tables, value.number, value.hash.clone(), &tx);
     }
 }
 
@@ -53,8 +69,14 @@ fn push_update(tables: &mut Tables, old_value: BlockMeta, new_value: BlockMeta) 
         .set("txnCount", new_value.txn_count)
         .set("minGasPrice", new_value.min_gas_price)
         .set("maxGasPrice", new_value.max_gas_price)
-        .set("firstGasPrice", BigInt::from_unsigned_bytes_be(&new_value.first_gas_price))
-        .set("lastGasPrice", BigInt::from_unsigned_bytes_be(&new_value.last_gas_price))
+        .set(
+            "firstGasPrice",
+            BigInt::from_unsigned_bytes_be(&new_value.first_gas_price),
+        )
+        .set(
+            "lastGasPrice",
+            BigInt::from_unsigned_bytes_be(&new_value.last_gas_price),
+        )
         .set("burnedFees", new_value.burned_fees)
         .set("gasFees", new_value.gas_fees)
         .set("minerTips", new_value.miner_tips);
@@ -66,12 +88,7 @@ fn push_update(tables: &mut Tables, old_value: BlockMeta, new_value: BlockMeta) 
 
     // Create transactions from the new block
     for tx in new_value.txns {
-        push_tx_meta_create(
-            tables,
-            new_value.number,
-            new_value.hash.clone(),
-            &tx,
-        );
+        push_tx_meta_create(tables, new_value.number, new_value.hash.clone(), &tx);
     }
 }
 
@@ -97,4 +114,40 @@ fn push_tx_meta_create(
         )
         .set("burnedFee", BigInt::from_unsigned_bytes_be(&tx.burned_fee))
         .set("minerTip", BigInt::from_unsigned_bytes_be(&tx.miner_tip));
+}
+
+pub fn base_gas_minute_open_to_tables(tables: &mut Tables, deltas: store::Deltas<DeltaBigInt>) {
+    for delta in deltas.deltas {
+        tables
+            .update_row("BaseGasMinuteCandle", delta.key.clone())
+            .set("timestamp", delta.key.parse::<i64>().unwrap())
+            .set("open", &delta.new_value);
+    }
+}
+
+pub fn base_gas_minute_high_to_tables(tables: &mut Tables, deltas: store::Deltas<DeltaBigInt>) {
+    for delta in deltas.deltas {
+        tables
+            .update_row("BaseGasMinuteCandle", delta.key.clone())
+            .set("timestamp", delta.key.parse::<i64>().unwrap())
+            .set("high", &delta.new_value);
+    }
+}
+
+pub fn base_gas_minute_low_to_tables(tables: &mut Tables, deltas: store::Deltas<DeltaBigInt>) {
+    for delta in deltas.deltas {
+        tables
+            .update_row("BaseGasMinuteCandle", delta.key.clone())
+            .set("timestamp", delta.key.parse::<i64>().unwrap())
+            .set("low", &delta.new_value);
+    }
+}
+
+pub fn base_gas_minute_close_to_tables(tables: &mut Tables, deltas: store::Deltas<DeltaBigInt>) {
+    for delta in deltas.deltas {
+        tables
+            .update_row("BaseGasMinuteCandle", delta.key.clone())
+            .set("timestamp", delta.key.parse::<i64>().unwrap())
+            .set("close", &delta.new_value);
+    }
 }

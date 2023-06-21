@@ -31,3 +31,12 @@ type Txn @entity(immutable: true) {
   burnedFee: BigInt!
   minerTip: BigInt!
 }
+
+type BaseGasMinuteCandle @entity {
+  id: String!
+  timestamp: BigInt!
+  open: BigInt
+  high: BigInt
+  low: BigInt
+  close: BigInt
+}

@@ -47,5 +47,45 @@ modules:
     inputs:
       - store: store_block_meta
         mode: deltas
+      - store: store_base_gas_price_minute_open
+        mode: deltas
+      - store: store_base_gas_price_minute_high
+        mode: deltas
+      - store: store_base_gas_price_minute_low
+        mode: deltas
+      - store: store_base_gas_price_minute_close
+        mode: deltas
     output:
       type: proto:sf.substreams.entity.v1.EntityChanges
+
+  - name: store_base_gas_price_minute_open
+    kind: store
+    initialBlock: 17491129 
+    updatePolicy: set_if_not_exists
+    valueType: bigint
+    inputs:
+      - map: map_block
+
+  - name: store_base_gas_price_minute_high
+    kind: store
+    initialBlock: 17491129 
+    updatePolicy: max
+    valueType: bigint
+    inputs:
+      - map: map_block
+
+  - name: store_base_gas_price_minute_low
+    kind: store
+    initialBlock: 17491129 
+    updatePolicy: min
+    valueType: bigint
+    inputs:
+      - map: map_block
+
+  - name: store_base_gas_price_minute_close
+    kind: store
+    initialBlock: 17491129 
+    updatePolicy: set
+    valueType: bigint
+    inputs:
+      - map: map_block
