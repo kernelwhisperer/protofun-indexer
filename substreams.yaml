@@ -55,6 +55,14 @@ modules:
         mode: deltas
       - store: store_base_fee_per_gas_price_minute_close
         mode: deltas
+      - store: store_base_fee_per_gas_price_hour_open
+        mode: deltas
+      - store: store_base_fee_per_gas_price_hour_high
+        mode: deltas
+      - store: store_base_fee_per_gas_price_hour_low
+        mode: deltas
+      - store: store_base_fee_per_gas_price_hour_close
+        mode: deltas
     output:
       type: proto:sf.substreams.entity.v1.EntityChanges
 
@@ -83,6 +91,38 @@ modules:
       - map: map_block
 
   - name: store_base_fee_per_gas_price_minute_close
+    kind: store
+    initialBlock: 17491129 
+    updatePolicy: set
+    valueType: bigint
+    inputs:
+      - map: map_block
+
+  - name: store_base_fee_per_gas_price_hour_open
+    kind: store
+    initialBlock: 17491129 
+    updatePolicy: set_if_not_exists
+    valueType: bigint
+    inputs:
+      - map: map_block
+
+  - name: store_base_fee_per_gas_price_hour_high
+    kind: store
+    initialBlock: 17491129 
+    updatePolicy: max
+    valueType: bigint
+    inputs:
+      - map: map_block
+
+  - name: store_base_fee_per_gas_price_hour_low
+    kind: store
+    initialBlock: 17491129 
+    updatePolicy: min
+    valueType: bigint
+    inputs:
+      - map: map_block
+
+  - name: store_base_fee_per_gas_price_hour_close
     kind: store
     initialBlock: 17491129 
     updatePolicy: set

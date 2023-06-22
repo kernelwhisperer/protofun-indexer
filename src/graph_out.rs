@@ -116,8 +116,9 @@ fn push_tx_meta_create(
         .set("minerTip", BigInt::from_unsigned_bytes_be(&tx.miner_tip));
 }
 
-pub fn base_fee_per_gas_minute_to_tables(
+pub fn candle_to_tables(
     tables: &mut Tables,
+    entity_id: &str,
     open_deltas: store::Deltas<DeltaBigInt>,
     high_deltas: store::Deltas<DeltaBigInt>,
     low_deltas: store::Deltas<DeltaBigInt>,
@@ -125,25 +126,25 @@ pub fn base_fee_per_gas_minute_to_tables(
 ) {
     for delta in open_deltas.deltas {
         tables
-            .update_row("BaseFeePerGasMinuteCandle", delta.key.clone())
+            .update_row(entity_id, delta.key.clone())
             .set("timestamp", delta.key.parse::<i64>().unwrap())
             .set("open", &delta.new_value);
     }
     for delta in high_deltas.deltas {
         tables
-            .update_row("BaseFeePerGasMinuteCandle", delta.key.clone())
+            .update_row(entity_id, delta.key.clone())
             .set("timestamp", delta.key.parse::<i64>().unwrap())
             .set("high", &delta.new_value);
     }
     for delta in low_deltas.deltas {
         tables
-            .update_row("BaseFeePerGasMinuteCandle", delta.key.clone())
+            .update_row(entity_id, delta.key.clone())
             .set("timestamp", delta.key.parse::<i64>().unwrap())
             .set("low", &delta.new_value);
     }
     for delta in close_deltas.deltas {
         tables
-            .update_row("BaseFeePerGasMinuteCandle", delta.key.clone())
+            .update_row(entity_id, delta.key.clone())
             .set("timestamp", delta.key.parse::<i64>().unwrap())
             .set("close", &delta.new_value);
     }
