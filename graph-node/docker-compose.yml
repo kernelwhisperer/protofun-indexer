@@ -1,8 +1,33 @@
 version: "3"
 services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/nginx/vhost.d
+      - /usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./certs:/etc/nginx/certs:ro
+    networks:
+      - proxy
+
+  letsencrypt-companion:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    volumes:
+      - ./certs:/etc/nginx/certs:rw
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    volumes_from:
+      - nginx-proxy
+    networks:
+      - proxy
+
   graph-node:
     container_name: graph-node
     image: graphprotocol/graph-node:c8b04a7
+    expose:
+      - "8000"
     ports:
       - '8000:8000'
       - '8001:8001'
@@ -17,6 +42,10 @@ services:
     volumes:
       - ./config:/data/config
     environment:
+      VIRTUAL_HOST: api.protocol.fun
+      VIRTUAL_PORT: 8000
+      LETSENCRYPT_HOST: api.protocol.fun
+      LETSENCRYPT_EMAIL: hello@danielconstantin.net
       postgres_host: postgres
       postgres_user: graph-node
       postgres_pass: let-me-in
@@ -26,6 +55,9 @@ services:
       GRAPH_NODE_CONFIG: /data/config/config.toml
       SUBSTREAMS_ENDPOINT: "${SUBSTREAMS_ENDPOINT}"
       SUBSTREAMS_API_TOKEN: "${SUBSTREAMS_API_TOKEN}"
+    networks:
+      - proxy
+
   ipfs:
     container_name: ipfs
     image: ipfs/kubo:v0.14.0
@@ -35,6 +67,9 @@ services:
     volumes:
       - ipfsdata:/data/ipfs
       - ipfsdata_export:/export
+    networks:
+      - proxy
+
   postgres:
     container_name: postgres
     image: postgres:14
@@ -48,11 +83,9 @@ services:
       POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
     volumes:
       - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "5432"]
-      interval: 30s
-      timeout: 10s
-      retries: 15
+    networks:
+      - proxy
+
   pgweb:
     container_name: pgweb
     image: sosedoff/pgweb:0.11.12
@@ -60,12 +93,14 @@ services:
     ports:
       - "8081:8081"
     command: ["pgweb", "--bind=0.0.0.0", "--listen=8081", "--binary-codec=hex"]
-    links:
-      - postgres:postgres
     environment:
       - DATABASE_URL=postgres://graph-node:let-me-in@postgres:5432/graph-node?sslmode=disable
-    depends_on:
-      - postgres
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
 
 volumes:
   pgdata:
