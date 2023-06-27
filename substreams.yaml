@@ -63,21 +63,21 @@ modules:
         mode: deltas
       - store: store_base_fee_per_gas_hour_close
         mode: deltas
-      - store: store_base_fee_per_gas_price_day_open
+      - store: store_base_fee_per_gas_day_open
         mode: deltas
-      - store: store_base_fee_per_gas_price_day_high
+      - store: store_base_fee_per_gas_day_high
         mode: deltas
-      - store: store_base_fee_per_gas_price_day_low
+      - store: store_base_fee_per_gas_day_low
         mode: deltas
-      - store: store_base_fee_per_gas_price_day_close
+      - store: store_base_fee_per_gas_day_close
         mode: deltas
-      - store: store_base_fee_per_gas_price_week_open
+      - store: store_base_fee_per_gas_week_open
         mode: deltas
-      - store: store_base_fee_per_gas_price_week_high
+      - store: store_base_fee_per_gas_week_high
         mode: deltas
-      - store: store_base_fee_per_gas_price_week_low
+      - store: store_base_fee_per_gas_week_low
         mode: deltas
-      - store: store_base_fee_per_gas_price_week_close
+      - store: store_base_fee_per_gas_week_close
         mode: deltas
     output:
       type: proto:sf.substreams.entity.v1.EntityChanges
