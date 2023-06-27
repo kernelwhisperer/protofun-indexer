@@ -54,9 +54,9 @@ fn push_create(tables: &mut Tables, value: BlockMeta) {
             BigInt::from_unsigned_bytes_be(&value.miner_tips),
         );
 
-    for tx in value.txns {
-        push_tx_meta_create(tables, value.number, value.hash.clone(), &tx);
-    }
+    // for tx in value.txns {
+    //     push_tx_meta_create(tables, value.number, value.hash.clone(), &tx);
+    // }
 }
 
 fn push_update(tables: &mut Tables, old_value: BlockMeta, new_value: BlockMeta) {
@@ -81,15 +81,15 @@ fn push_update(tables: &mut Tables, old_value: BlockMeta, new_value: BlockMeta) 
         .set("gasFees", new_value.gas_fees)
         .set("minerTips", new_value.miner_tips);
 
-    // Delete transactions from the old block
-    for tx in old_value.txns {
-        tables.delete_row("transactions", Hex(tx.hash).to_string());
-    }
+    // // Delete transactions from the old block
+    // for tx in old_value.txns {
+    //     tables.delete_row("transactions", Hex(tx.hash).to_string());
+    // }
 
-    // Create transactions from the new block
-    for tx in new_value.txns {
-        push_tx_meta_create(tables, new_value.number, new_value.hash.clone(), &tx);
-    }
+    // // Create transactions from the new block
+    // for tx in new_value.txns {
+    //     push_tx_meta_create(tables, new_value.number, new_value.hash.clone(), &tx);
+    // }
 }
 
 fn push_tx_meta_create(
