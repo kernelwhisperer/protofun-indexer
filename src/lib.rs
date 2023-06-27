@@ -173,14 +173,14 @@ pub fn db_out(block_meta: store::Deltas<DeltaProto<BlockMeta>>) -> Result<Databa
 #[substreams::handlers::map]
 pub fn graph_out(
     block_meta: store::Deltas<DeltaProto<BlockMeta>>,
-    base_fee_per_gas_price_minute_open: store::Deltas<DeltaBigInt>,
-    base_fee_per_gas_price_minute_high: store::Deltas<DeltaBigInt>,
-    base_fee_per_gas_price_minute_low: store::Deltas<DeltaBigInt>,
-    base_fee_per_gas_price_minute_close: store::Deltas<DeltaBigInt>,
-    base_fee_per_gas_price_hour_open: store::Deltas<DeltaBigInt>,
-    base_fee_per_gas_price_hour_high: store::Deltas<DeltaBigInt>,
-    base_fee_per_gas_price_hour_low: store::Deltas<DeltaBigInt>,
-    base_fee_per_gas_price_hour_close: store::Deltas<DeltaBigInt>,
+    base_fee_per_gas_minute_open: store::Deltas<DeltaBigInt>,
+    base_fee_per_gas_minute_high: store::Deltas<DeltaBigInt>,
+    base_fee_per_gas_minute_low: store::Deltas<DeltaBigInt>,
+    base_fee_per_gas_minute_close: store::Deltas<DeltaBigInt>,
+    base_fee_per_gas_hour_open: store::Deltas<DeltaBigInt>,
+    base_fee_per_gas_hour_high: store::Deltas<DeltaBigInt>,
+    base_fee_per_gas_hour_low: store::Deltas<DeltaBigInt>,
+    base_fee_per_gas_hour_close: store::Deltas<DeltaBigInt>,
 ) -> Result<EntityChanges, Error> {
     // substreams::log::info!(
     //     "tx len {} block {}",
@@ -192,18 +192,18 @@ pub fn graph_out(
     graph_out::candle_to_tables(
         &mut tables,
         "BaseFeePerGasMinuteCandle",
-        base_fee_per_gas_price_minute_open,
-        base_fee_per_gas_price_minute_high,
-        base_fee_per_gas_price_minute_low,
-        base_fee_per_gas_price_minute_close,
+        base_fee_per_gas_minute_open,
+        base_fee_per_gas_minute_high,
+        base_fee_per_gas_minute_low,
+        base_fee_per_gas_minute_close,
     );
     graph_out::candle_to_tables(
         &mut tables,
         "BaseFeePerGasHourCandle",
-        base_fee_per_gas_price_hour_open,
-        base_fee_per_gas_price_hour_high,
-        base_fee_per_gas_price_hour_low,
-        base_fee_per_gas_price_hour_close,
+        base_fee_per_gas_hour_open,
+        base_fee_per_gas_hour_high,
+        base_fee_per_gas_hour_low,
+        base_fee_per_gas_hour_close,
     );
 
     Ok(tables.to_entity_changes())
@@ -217,7 +217,7 @@ fn get_latest_time_unit(timestamp: i64, interval_in_seconds: i64) -> String {
 }
 
 #[substreams::handlers::store]
-fn store_base_fee_per_gas_price_minute_open(
+fn store_base_fee_per_gas_minute_open(
     block_meta: BlockMeta,
     store: StoreSetIfNotExistsBigInt,
 ) {
@@ -229,7 +229,7 @@ fn store_base_fee_per_gas_price_minute_open(
 }
 
 #[substreams::handlers::store]
-fn store_base_fee_per_gas_price_minute_low(block_meta: BlockMeta, store: StoreMinBigInt) {
+fn store_base_fee_per_gas_minute_low(block_meta: BlockMeta, store: StoreMinBigInt) {
     store.min(
         0,
         get_latest_time_unit(block_meta.timestamp, 60),
@@ -238,7 +238,7 @@ fn store_base_fee_per_gas_price_minute_low(block_meta: BlockMeta, store: StoreMi
 }
 
 #[substreams::handlers::store]
-fn store_base_fee_per_gas_price_minute_high(block_meta: BlockMeta, store: StoreMaxBigInt) {
+fn store_base_fee_per_gas_minute_high(block_meta: BlockMeta, store: StoreMaxBigInt) {
     store.max(
         0,
         get_latest_time_unit(block_meta.timestamp, 60),
@@ -247,7 +247,7 @@ fn store_base_fee_per_gas_price_minute_high(block_meta: BlockMeta, store: StoreM
 }
 
 #[substreams::handlers::store]
-fn store_base_fee_per_gas_price_minute_close(block_meta: BlockMeta, store: StoreSetBigInt) {
+fn store_base_fee_per_gas_minute_close(block_meta: BlockMeta, store: StoreSetBigInt) {
     store.set(
         0,
         get_latest_time_unit(block_meta.timestamp, 60),
@@ -256,7 +256,7 @@ fn store_base_fee_per_gas_price_minute_close(block_meta: BlockMeta, store: Store
 }
 
 #[substreams::handlers::store]
-fn store_base_fee_per_gas_price_hour_open(
+fn store_base_fee_per_gas_hour_open(
     block_meta: BlockMeta,
     store: StoreSetIfNotExistsBigInt,
 ) {
@@ -268,7 +268,7 @@ fn store_base_fee_per_gas_price_hour_open(
 }
 
 #[substreams::handlers::store]
-fn store_base_fee_per_gas_price_hour_low(block_meta: BlockMeta, store: StoreMinBigInt) {
+fn store_base_fee_per_gas_hour_low(block_meta: BlockMeta, store: StoreMinBigInt) {
     store.min(
         0,
         get_latest_time_unit(block_meta.timestamp, 3600),
@@ -277,7 +277,7 @@ fn store_base_fee_per_gas_price_hour_low(block_meta: BlockMeta, store: StoreMinB
 }
 
 #[substreams::handlers::store]
-fn store_base_fee_per_gas_price_hour_high(block_meta: BlockMeta, store: StoreMaxBigInt) {
+fn store_base_fee_per_gas_hour_high(block_meta: BlockMeta, store: StoreMaxBigInt) {
     store.max(
         0,
         get_latest_time_unit(block_meta.timestamp, 3600),
@@ -286,7 +286,7 @@ fn store_base_fee_per_gas_price_hour_high(block_meta: BlockMeta, store: StoreMax
 }
 
 #[substreams::handlers::store]
-fn store_base_fee_per_gas_price_hour_close(block_meta: BlockMeta, store: StoreSetBigInt) {
+fn store_base_fee_per_gas_hour_close(block_meta: BlockMeta, store: StoreSetBigInt) {
     store.set(
         0,
         get_latest_time_unit(block_meta.timestamp, 3600),
