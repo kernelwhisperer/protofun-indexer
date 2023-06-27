@@ -63,6 +63,22 @@ modules:
         mode: deltas
       - store: store_base_fee_per_gas_hour_close
         mode: deltas
+      - store: store_base_fee_per_gas_price_day_open
+        mode: deltas
+      - store: store_base_fee_per_gas_price_day_high
+        mode: deltas
+      - store: store_base_fee_per_gas_price_day_low
+        mode: deltas
+      - store: store_base_fee_per_gas_price_day_close
+        mode: deltas
+      - store: store_base_fee_per_gas_price_week_open
+        mode: deltas
+      - store: store_base_fee_per_gas_price_week_high
+        mode: deltas
+      - store: store_base_fee_per_gas_price_week_low
+        mode: deltas
+      - store: store_base_fee_per_gas_price_week_close
+        mode: deltas
     output:
       type: proto:sf.substreams.entity.v1.EntityChanges
 
@@ -123,6 +139,70 @@ modules:
       - map: map_block
 
   - name: store_base_fee_per_gas_hour_close
+    kind: store
+    initialBlock: 17491129 
+    updatePolicy: set
+    valueType: bigint
+    inputs:
+      - map: map_block
+
+  - name: store_base_fee_per_gas_day_open
+    kind: store
+    initialBlock: 17491129 
+    updatePolicy: set_if_not_exists
+    valueType: bigint
+    inputs:
+      - map: map_block
+
+  - name: store_base_fee_per_gas_day_high
+    kind: store
+    initialBlock: 17491129 
+    updatePolicy: max
+    valueType: bigint
+    inputs:
+      - map: map_block
+
+  - name: store_base_fee_per_gas_day_low
+    kind: store
+    initialBlock: 17491129 
+    updatePolicy: min
+    valueType: bigint
+    inputs:
+      - map: map_block
+
+  - name: store_base_fee_per_gas_day_close
+    kind: store
+    initialBlock: 17491129 
+    updatePolicy: set
+    valueType: bigint
+    inputs:
+      - map: map_block
+
+  - name: store_base_fee_per_gas_week_open
+    kind: store
+    initialBlock: 17491129 
+    updatePolicy: set_if_not_exists
+    valueType: bigint
+    inputs:
+      - map: map_block
+
+  - name: store_base_fee_per_gas_week_high
+    kind: store
+    initialBlock: 17491129 
+    updatePolicy: max
+    valueType: bigint
+    inputs:
+      - map: map_block
+
+  - name: store_base_fee_per_gas_week_low
+    kind: store
+    initialBlock: 17491129 
+    updatePolicy: min
+    valueType: bigint
+    inputs:
+      - map: map_block
+
+  - name: store_base_fee_per_gas_week_close
     kind: store
     initialBlock: 17491129 
     updatePolicy: set

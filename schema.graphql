@@ -50,3 +50,21 @@ type BaseFeePerGasHourCandle @entity {
   low: BigInt
   close: BigInt
 }
+
+type BaseFeePerGasDayCandle @entity {
+  id: String!
+  timestamp: BigInt!
+  open: BigInt
+  high: BigInt
+  low: BigInt
+  close: BigInt
+}
+
+type BaseFeePerGasWeekCandle @entity {
+  id: String!
+  timestamp: BigInt!
+  open: BigInt
+  high: BigInt
+  low: BigInt
+  close: BigInt
+}

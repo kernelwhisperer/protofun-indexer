@@ -181,6 +181,14 @@ pub fn graph_out(
     base_fee_per_gas_hour_high: store::Deltas<DeltaBigInt>,
     base_fee_per_gas_hour_low: store::Deltas<DeltaBigInt>,
     base_fee_per_gas_hour_close: store::Deltas<DeltaBigInt>,
+    base_fee_per_gas_day_open: store::Deltas<DeltaBigInt>,
+    base_fee_per_gas_day_high: store::Deltas<DeltaBigInt>,
+    base_fee_per_gas_day_low: store::Deltas<DeltaBigInt>,
+    base_fee_per_gas_day_close: store::Deltas<DeltaBigInt>,
+    base_fee_per_gas_week_open: store::Deltas<DeltaBigInt>,
+    base_fee_per_gas_week_high: store::Deltas<DeltaBigInt>,
+    base_fee_per_gas_week_low: store::Deltas<DeltaBigInt>,
+    base_fee_per_gas_week_close: store::Deltas<DeltaBigInt>,
 ) -> Result<EntityChanges, Error> {
     // substreams::log::info!(
     //     "tx len {} block {}",
@@ -205,6 +213,22 @@ pub fn graph_out(
         base_fee_per_gas_hour_low,
         base_fee_per_gas_hour_close,
     );
+    graph_out::candle_to_tables(
+        &mut tables,
+        "BaseFeePerGasDayCandle",
+        base_fee_per_gas_day_open,
+        base_fee_per_gas_day_high,
+        base_fee_per_gas_day_low,
+        base_fee_per_gas_day_close,
+    );
+    graph_out::candle_to_tables(
+        &mut tables,
+        "BaseFeePerGasWeekCandle",
+        base_fee_per_gas_week_open,
+        base_fee_per_gas_week_high,
+        base_fee_per_gas_week_low,
+        base_fee_per_gas_week_close,
+    );
 
     Ok(tables.to_entity_changes())
 }
@@ -217,10 +241,7 @@ fn get_latest_time_unit(timestamp: i64, interval_in_seconds: i64) -> String {
 }
 
 #[substreams::handlers::store]
-fn store_base_fee_per_gas_minute_open(
-    block_meta: BlockMeta,
-    store: StoreSetIfNotExistsBigInt,
-) {
+fn store_base_fee_per_gas_minute_open(block_meta: BlockMeta, store: StoreSetIfNotExistsBigInt) {
     store.set_if_not_exists(
         0,
         get_latest_time_unit(block_meta.timestamp, 60),
@@ -256,10 +277,7 @@ fn store_base_fee_per_gas_minute_close(block_meta: BlockMeta, store: StoreSetBig
 }
 
 #[substreams::handlers::store]
-fn store_base_fee_per_gas_hour_open(
-    block_meta: BlockMeta,
-    store: StoreSetIfNotExistsBigInt,
-) {
+fn store_base_fee_per_gas_hour_open(block_meta: BlockMeta, store: StoreSetIfNotExistsBigInt) {
     store.set_if_not_exists(
         0,
         get_latest_time_unit(block_meta.timestamp, 3600),
@@ -290,6 +308,78 @@ fn store_base_fee_per_gas_hour_close(block_meta: BlockMeta, store: StoreSetBigIn
     store.set(
         0,
         get_latest_time_unit(block_meta.timestamp, 3600),
+        &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
+    );
+}
+
+#[substreams::handlers::store]
+fn store_base_fee_per_gas_day_open(block_meta: BlockMeta, store: StoreSetIfNotExistsBigInt) {
+    store.set_if_not_exists(
+        0,
+        get_latest_time_unit(block_meta.timestamp, 3600 * 24),
+        &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
+    );
+}
+
+#[substreams::handlers::store]
+fn store_base_fee_per_gas_day_low(block_meta: BlockMeta, store: StoreMinBigInt) {
+    store.min(
+        0,
+        get_latest_time_unit(block_meta.timestamp, 3600 * 24),
+        &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
+    );
+}
+
+#[substreams::handlers::store]
+fn store_base_fee_per_gas_day_high(block_meta: BlockMeta, store: StoreMaxBigInt) {
+    store.max(
+        0,
+        get_latest_time_unit(block_meta.timestamp, 3600 * 24),
+        &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
+    );
+}
+
+#[substreams::handlers::store]
+fn store_base_fee_per_gas_day_close(block_meta: BlockMeta, store: StoreSetBigInt) {
+    store.set(
+        0,
+        get_latest_time_unit(block_meta.timestamp, 3600 * 24),
+        &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
+    );
+}
+
+#[substreams::handlers::store]
+fn store_base_fee_per_gas_week_open(block_meta: BlockMeta, store: StoreSetIfNotExistsBigInt) {
+    store.set_if_not_exists(
+        0,
+        get_latest_time_unit(block_meta.timestamp, 3600 * 24 * 7),
+        &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
+    );
+}
+
+#[substreams::handlers::store]
+fn store_base_fee_per_gas_week_low(block_meta: BlockMeta, store: StoreMinBigInt) {
+    store.min(
+        0,
+        get_latest_time_unit(block_meta.timestamp, 3600 * 24 * 7),
+        &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
+    );
+}
+
+#[substreams::handlers::store]
+fn store_base_fee_per_gas_week_high(block_meta: BlockMeta, store: StoreMaxBigInt) {
+    store.max(
+        0,
+        get_latest_time_unit(block_meta.timestamp, 3600 * 24 * 7),
+        &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
+    );
+}
+
+#[substreams::handlers::store]
+fn store_base_fee_per_gas_week_close(block_meta: BlockMeta, store: StoreSetBigInt) {
+    store.set(
+        0,
+        get_latest_time_unit(block_meta.timestamp, 3600 * 24 * 7),
         &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
     );
 }
