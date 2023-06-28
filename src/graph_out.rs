@@ -2,16 +2,15 @@ use substreams::store::{self, DeltaBigInt, DeltaProto};
 use substreams_entity_change::tables::Tables;
 
 use crate::pb::sf::ethereum::block_meta::v1::{BlockMeta, TransactionMeta};
+use substreams::pb::substreams::store_delta::Operation;
 use substreams::{scalar::BigInt, Hex};
 
 pub fn block_meta_to_tables(tables: &mut Tables, deltas: store::Deltas<DeltaProto<BlockMeta>>) {
-    use substreams::pb::substreams::store_delta::Operation;
-
     for delta in deltas.deltas {
         match delta.operation {
             Operation::Create => push_create(tables, delta.new_value),
             Operation::Update => push_update(tables, delta.old_value, delta.new_value),
-            Operation::Delete => todo!(),
+            Operation::Delete => {}
             x => panic!("unsupported operation {:?}", x),
         }
     }
@@ -125,27 +124,75 @@ pub fn candle_to_tables(
     close_deltas: store::Deltas<DeltaBigInt>,
 ) {
     for delta in open_deltas.deltas {
-        tables
-            .update_row(entity_id, delta.key.clone())
-            .set("timestamp", delta.key.parse::<i64>().unwrap())
-            .set("open", &delta.new_value);
+        match delta.operation {
+            Operation::Create => {
+                tables
+                    .create_row(entity_id, delta.key.clone())
+                    .set("timestamp", delta.key.parse::<i64>().unwrap())
+                    .set("open", &delta.new_value);
+            }
+            Operation::Update => {
+                tables
+                    .update_row(entity_id, delta.key.clone())
+                    .set("timestamp", delta.key.parse::<i64>().unwrap())
+                    .set("open", &delta.new_value);
+            }
+            Operation::Delete => {}
+            x => panic!("unsupported operation {:?}", x),
+        }
     }
     for delta in high_deltas.deltas {
-        tables
-            .update_row(entity_id, delta.key.clone())
-            .set("timestamp", delta.key.parse::<i64>().unwrap())
-            .set("high", &delta.new_value);
+        match delta.operation {
+            Operation::Create => {
+                tables
+                    .create_row(entity_id, delta.key.clone())
+                    .set("timestamp", delta.key.parse::<i64>().unwrap())
+                    .set("high", &delta.new_value);
+            }
+            Operation::Update => {
+                tables
+                    .update_row(entity_id, delta.key.clone())
+                    .set("timestamp", delta.key.parse::<i64>().unwrap())
+                    .set("high", &delta.new_value);
+            }
+            Operation::Delete => {}
+            x => panic!("unsupported operation {:?}", x),
+        }
     }
     for delta in low_deltas.deltas {
-        tables
-            .update_row(entity_id, delta.key.clone())
-            .set("timestamp", delta.key.parse::<i64>().unwrap())
-            .set("low", &delta.new_value);
+        match delta.operation {
+            Operation::Create => {
+                tables
+                    .create_row(entity_id, delta.key.clone())
+                    .set("timestamp", delta.key.parse::<i64>().unwrap())
+                    .set("low", &delta.new_value);
+            }
+            Operation::Update => {
+                tables
+                    .update_row(entity_id, delta.key.clone())
+                    .set("timestamp", delta.key.parse::<i64>().unwrap())
+                    .set("low", &delta.new_value);
+            }
+            Operation::Delete => {}
+            x => panic!("unsupported operation {:?}", x),
+        }
     }
     for delta in close_deltas.deltas {
-        tables
-            .update_row(entity_id, delta.key.clone())
-            .set("timestamp", delta.key.parse::<i64>().unwrap())
-            .set("close", &delta.new_value);
+        match delta.operation {
+            Operation::Create => {
+                tables
+                    .create_row(entity_id, delta.key.clone())
+                    .set("timestamp", delta.key.parse::<i64>().unwrap())
+                    .set("close", &delta.new_value);
+            }
+            Operation::Update => {
+                tables
+                    .update_row(entity_id, delta.key.clone())
+                    .set("timestamp", delta.key.parse::<i64>().unwrap())
+                    .set("close", &delta.new_value);
+            }
+            Operation::Delete => {}
+            x => panic!("unsupported operation {:?}", x),
+        }
     }
 }
