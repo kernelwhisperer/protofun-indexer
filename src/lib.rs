@@ -234,185 +234,185 @@ pub fn graph_out(
     Ok(tables.to_entity_changes())
 }
 
-fn get_latest_time_unit(timestamp: i64, interval_in_seconds: i64) -> i64 {
+fn get_latest_time_unit(timestamp: i64, interval_in_seconds: i64, offset: i64) -> i64 {
     let timestamp_seconds = timestamp;
     let latest_time_unit = (timestamp_seconds / interval_in_seconds) * interval_in_seconds;
 
-    return latest_time_unit;
+    return latest_time_unit - offset;
 }
 
 #[substreams::handlers::store]
 fn store_base_fee_per_gas_minute_open(block_meta: BlockMeta, store: StoreSetIfNotExistsBigInt) {
-    let id = get_latest_time_unit(block_meta.timestamp, 60);
+    let id = get_latest_time_unit(block_meta.timestamp, 60, 0);
     store.set_if_not_exists(
         0,
         id.to_string(),
         &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
     );
-    store.delete_prefix(0, &(id - 120000).to_string());
+    store.delete_prefix(0, &(id - 172800).to_string());
 }
 
 #[substreams::handlers::store]
 fn store_base_fee_per_gas_minute_low(block_meta: BlockMeta, store: StoreMinBigInt) {
-    let id = get_latest_time_unit(block_meta.timestamp, 60);
+    let id = get_latest_time_unit(block_meta.timestamp, 60, 0);
     store.min(
         0,
         id.to_string(),
         &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
     );
-    store.delete_prefix(0, &(id - 120000).to_string());
+    store.delete_prefix(0, &(id - 172800).to_string());
 }
 
 #[substreams::handlers::store]
 fn store_base_fee_per_gas_minute_high(block_meta: BlockMeta, store: StoreMaxBigInt) {
-    let id = get_latest_time_unit(block_meta.timestamp, 60);
+    let id = get_latest_time_unit(block_meta.timestamp, 60, 0);
     store.max(
         0,
         id.to_string(),
         &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
     );
-    store.delete_prefix(0, &(id - 120000).to_string());
+    store.delete_prefix(0, &(id - 172800).to_string());
 }
 
 #[substreams::handlers::store]
 fn store_base_fee_per_gas_minute_close(block_meta: BlockMeta, store: StoreSetBigInt) {
-    let id = get_latest_time_unit(block_meta.timestamp, 60);
+    let id = get_latest_time_unit(block_meta.timestamp, 60, 0);
     store.set(
         0,
         id.to_string(),
         &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
     );
-    store.delete_prefix(0, &(id - 120000).to_string());
+    store.delete_prefix(0, &(id - 172800).to_string());
 }
 
 #[substreams::handlers::store]
 fn store_base_fee_per_gas_hour_open(block_meta: BlockMeta, store: StoreSetIfNotExistsBigInt) {
-    let id = get_latest_time_unit(block_meta.timestamp, 3600);
+    let id = get_latest_time_unit(block_meta.timestamp, 3600, 0);
     store.set_if_not_exists(
         0,
         id.to_string(),
         &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
     );
-    store.delete_prefix(0, &(id - 120000).to_string());
+    store.delete_prefix(0, &(id - 172800).to_string());
 }
 
 #[substreams::handlers::store]
 fn store_base_fee_per_gas_hour_low(block_meta: BlockMeta, store: StoreMinBigInt) {
-    let id = get_latest_time_unit(block_meta.timestamp, 3600);
+    let id = get_latest_time_unit(block_meta.timestamp, 3600, 0);
     store.min(
         0,
         id.to_string(),
         &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
     );
-    store.delete_prefix(0, &(id - 120000).to_string());
+    store.delete_prefix(0, &(id - 172800).to_string());
 }
 
 #[substreams::handlers::store]
 fn store_base_fee_per_gas_hour_high(block_meta: BlockMeta, store: StoreMaxBigInt) {
-    let id = get_latest_time_unit(block_meta.timestamp, 3600);
+    let id = get_latest_time_unit(block_meta.timestamp, 3600, 0);
     store.max(
         0,
         id.to_string(),
         &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
     );
-    store.delete_prefix(0, &(id - 120000).to_string());
+    store.delete_prefix(0, &(id - 172800).to_string());
 }
 
 #[substreams::handlers::store]
 fn store_base_fee_per_gas_hour_close(block_meta: BlockMeta, store: StoreSetBigInt) {
-    let id = get_latest_time_unit(block_meta.timestamp, 3600);
+    let id = get_latest_time_unit(block_meta.timestamp, 3600, 0);
     store.set(
         0,
         id.to_string(),
         &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
     );
-    store.delete_prefix(0, &(id - 120000).to_string());
+    store.delete_prefix(0, &(id - 172800).to_string());
 }
 
 #[substreams::handlers::store]
 fn store_base_fee_per_gas_day_open(block_meta: BlockMeta, store: StoreSetIfNotExistsBigInt) {
-    let id = get_latest_time_unit(block_meta.timestamp, 86400);
+    let id = get_latest_time_unit(block_meta.timestamp, 86400, 0);
     store.set_if_not_exists(
         0,
         id.to_string(),
         &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
     );
-    store.delete_prefix(0, &(id - 120000).to_string());
+    store.delete_prefix(0, &(id - 172800).to_string());
 }
 
 #[substreams::handlers::store]
 fn store_base_fee_per_gas_day_low(block_meta: BlockMeta, store: StoreMinBigInt) {
-    let id = get_latest_time_unit(block_meta.timestamp, 86400);
+    let id = get_latest_time_unit(block_meta.timestamp, 86400, 0);
     store.min(
         0,
         id.to_string(),
         &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
     );
-    store.delete_prefix(0, &(id - 120000).to_string());
+    store.delete_prefix(0, &(id - 172800).to_string());
 }
 
 #[substreams::handlers::store]
 fn store_base_fee_per_gas_day_high(block_meta: BlockMeta, store: StoreMaxBigInt) {
-    let id = get_latest_time_unit(block_meta.timestamp, 86400);
+    let id = get_latest_time_unit(block_meta.timestamp, 86400, 0);
     store.max(
         0,
         id.to_string(),
         &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
     );
-    store.delete_prefix(0, &(id - 120000).to_string());
+    store.delete_prefix(0, &(id - 172800).to_string());
 }
 
 #[substreams::handlers::store]
 fn store_base_fee_per_gas_day_close(block_meta: BlockMeta, store: StoreSetBigInt) {
-    let id = get_latest_time_unit(block_meta.timestamp, 86400);
+    let id = get_latest_time_unit(block_meta.timestamp, 86400, 0);
     store.set(
         0,
         id.to_string(),
         &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
     );
-    store.delete_prefix(0, &(id - 120000).to_string());
+    store.delete_prefix(0, &(id - 172800).to_string());
 }
 
 #[substreams::handlers::store]
 fn store_base_fee_per_gas_week_open(block_meta: BlockMeta, store: StoreSetIfNotExistsBigInt) {
-    let id = get_latest_time_unit(block_meta.timestamp, 604800);
+    let id = get_latest_time_unit(block_meta.timestamp, 604800, 259200);
     store.set_if_not_exists(
         0,
         id.to_string(),
         &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
     );
-    store.delete_prefix(0, &(id - 864000).to_string());
+    store.delete_prefix(0, &(id - 1209600).to_string());
 }
 
 #[substreams::handlers::store]
 fn store_base_fee_per_gas_week_low(block_meta: BlockMeta, store: StoreMinBigInt) {
-    let id = get_latest_time_unit(block_meta.timestamp, 604800);
+    let id = get_latest_time_unit(block_meta.timestamp, 604800, 259200);
     store.min(
         0,
         id.to_string(),
         &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
     );
-    store.delete_prefix(0, &(id - 864000).to_string());
+    store.delete_prefix(0, &(id - 1209600).to_string());
 }
 
 #[substreams::handlers::store]
 fn store_base_fee_per_gas_week_high(block_meta: BlockMeta, store: StoreMaxBigInt) {
-    let id = get_latest_time_unit(block_meta.timestamp, 604800);
+    let id = get_latest_time_unit(block_meta.timestamp, 604800, 259200);
     store.max(
         0,
         id.to_string(),
         &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
     );
-    store.delete_prefix(0, &(id - 864000).to_string());
+    store.delete_prefix(0, &(id - 1209600).to_string());
 }
 
 #[substreams::handlers::store]
 fn store_base_fee_per_gas_week_close(block_meta: BlockMeta, store: StoreSetBigInt) {
-    let id = get_latest_time_unit(block_meta.timestamp, 604800);
+    let id = get_latest_time_unit(block_meta.timestamp, 604800, 259200);
     store.set(
         0,
         id.to_string(),
         &BigInt::from_unsigned_bytes_be(&block_meta.base_fee_per_gas),
     );
-    store.delete_prefix(0, &(id - 864000).to_string());
+    store.delete_prefix(0, &(id - 1209600).to_string());
 }

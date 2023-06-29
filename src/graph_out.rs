@@ -129,7 +129,7 @@ pub fn candle_to_tables(
                 tables
                     .create_row(entity_id, delta.key.clone())
                     .set("timestamp", delta.key.parse::<i64>().unwrap())
-                    .set("open", &delta.new_value);
+                    .set("open", &delta.new_value); // TODO: panic if new_value is null 
             }
             Operation::Update => {
                 tables
