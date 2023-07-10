@@ -173,34 +173,32 @@ pub fn db_out(block_meta: store::Deltas<DeltaProto<BlockMeta>>) -> Result<Databa
 
 #[substreams::handlers::map]
 pub fn graph_out(
-    block_meta: store::Deltas<DeltaProto<BlockMeta>>,
-    base_fee_per_gas_minute_open: store::Deltas<DeltaBigInt>,
-    base_fee_per_gas_minute_high: store::Deltas<DeltaBigInt>,
-    base_fee_per_gas_minute_low: store::Deltas<DeltaBigInt>,
-    base_fee_per_gas_minute_close: store::Deltas<DeltaBigInt>,
-    base_fee_per_gas_hour_open: store::Deltas<DeltaBigInt>,
-    base_fee_per_gas_hour_high: store::Deltas<DeltaBigInt>,
-    base_fee_per_gas_hour_low: store::Deltas<DeltaBigInt>,
-    base_fee_per_gas_hour_close: store::Deltas<DeltaBigInt>,
-    base_fee_per_gas_day_open: store::Deltas<DeltaBigInt>,
-    base_fee_per_gas_day_high: store::Deltas<DeltaBigInt>,
-    base_fee_per_gas_day_low: store::Deltas<DeltaBigInt>,
-    base_fee_per_gas_day_close: store::Deltas<DeltaBigInt>,
-    base_fee_per_gas_week_open: store::Deltas<DeltaBigInt>,
-    base_fee_per_gas_week_high: store::Deltas<DeltaBigInt>,
-    base_fee_per_gas_week_low: store::Deltas<DeltaBigInt>,
-    base_fee_per_gas_week_close: store::Deltas<DeltaBigInt>,
+    block: eth::v2::Block,
+    base_fee_per_gas_minute_open: StoreGetBigInt,
+    base_fee_per_gas_minute_high: StoreGetBigInt,
+    base_fee_per_gas_minute_low: StoreGetBigInt,
+    base_fee_per_gas_minute_close: StoreGetBigInt,
+    base_fee_per_gas_hour_open: StoreGetBigInt,
+    base_fee_per_gas_hour_high: StoreGetBigInt,
+    base_fee_per_gas_hour_low: StoreGetBigInt,
+    base_fee_per_gas_hour_close: StoreGetBigInt,
+    base_fee_per_gas_day_open: StoreGetBigInt,
+    base_fee_per_gas_day_high: StoreGetBigInt,
+    base_fee_per_gas_day_low: StoreGetBigInt,
+    base_fee_per_gas_day_close: StoreGetBigInt,
+    base_fee_per_gas_week_open: StoreGetBigInt,
+    base_fee_per_gas_week_high: StoreGetBigInt,
+    base_fee_per_gas_week_low: StoreGetBigInt,
+    base_fee_per_gas_week_close: StoreGetBigInt,
 ) -> Result<EntityChanges, Error> {
-    // substreams::log::info!(
-    //     "tx len {} block {}",
-    //     block_meta.deltas.len(),
-    //     block.number
-    // );
+    let block_meta = map_block_to_meta(block);
     let mut tables = substreams_entity_change::tables::Tables::new();
-    graph_out::block_meta_to_tables(&mut tables, block_meta);
+    
+    graph_out::block_meta_to_tables(&mut tables, block_meta.clone());
     graph_out::candle_to_tables(
         &mut tables,
         "BaseFeePerGasMinuteCandle",
+        get_latest_time_unit(block_meta.timestamp, 60, 0).to_string(),
         base_fee_per_gas_minute_open,
         base_fee_per_gas_minute_high,
         base_fee_per_gas_minute_low,
@@ -209,6 +207,7 @@ pub fn graph_out(
     graph_out::candle_to_tables(
         &mut tables,
         "BaseFeePerGasHourCandle",
+        get_latest_time_unit(block_meta.timestamp, 3600, 0).to_string(),
         base_fee_per_gas_hour_open,
         base_fee_per_gas_hour_high,
         base_fee_per_gas_hour_low,
@@ -217,6 +216,7 @@ pub fn graph_out(
     graph_out::candle_to_tables(
         &mut tables,
         "BaseFeePerGasDayCandle",
+        get_latest_time_unit(block_meta.timestamp, 86400, 0).to_string(),
         base_fee_per_gas_day_open,
         base_fee_per_gas_day_high,
         base_fee_per_gas_day_low,
@@ -225,6 +225,7 @@ pub fn graph_out(
     graph_out::candle_to_tables(
         &mut tables,
         "BaseFeePerGasWeekCandle",
+        get_latest_time_unit(block_meta.timestamp, 604800, 259200).to_string(),
         base_fee_per_gas_week_open,
         base_fee_per_gas_week_high,
         base_fee_per_gas_week_low,

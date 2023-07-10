@@ -33,7 +33,7 @@ type Txn @entity(immutable: true) {
 }
 
 type BaseFeePerGasMinuteCandle @entity {
-  id: String!
+  id: ID!
   timestamp: BigInt!
   " The highest value of base fee per gas within the minute "
   open: BigInt
@@ -43,7 +43,7 @@ type BaseFeePerGasMinuteCandle @entity {
 }
 
 type BaseFeePerGasHourCandle @entity {
-  id: String!
+  id: ID!
   timestamp: BigInt!
   open: BigInt
   high: BigInt
@@ -52,7 +52,7 @@ type BaseFeePerGasHourCandle @entity {
 }
 
 type BaseFeePerGasDayCandle @entity {
-  id: String!
+  id: ID!
   timestamp: BigInt!
   open: BigInt
   high: BigInt
@@ -61,7 +61,7 @@ type BaseFeePerGasDayCandle @entity {
 }
 
 type BaseFeePerGasWeekCandle @entity {
-  id: String!
+  id: ID!
   timestamp: BigInt!
   open: BigInt
   high: BigInt
