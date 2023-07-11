@@ -2,7 +2,7 @@ ENDPOINT ?= mainnet.eth.streamingfast.io:443
 POSTGRESQL_DSN ?= psql://daniel:toor@localhost:5432/protofun?sslmode=disable
 
 START_BLOCK ?= 12965000
-STOP_BLOCK  ?= +5
+STOP_BLOCK  ?= +1
 # START_BLOCK ?= 12964995
 # STOP_BLOCK  ?= 12965005
 
@@ -64,7 +64,7 @@ remove-graph-node:
 deploy-graph: package
 	graph build --ipfs $(IPFS_ENDPOINT) subgraph.yaml
 	graph create protofun_block_meta --node $(GRAPH_NODE_ENDPOINT)
-	graph deploy --node $(GRAPH_NODE_ENDPOINT) --ipfs $(IPFS_ENDPOINT) --version-label v0.2.1 protofun_block_meta subgraph.yaml
+	graph deploy --node $(GRAPH_NODE_ENDPOINT) --ipfs $(IPFS_ENDPOINT) --version-label v0.2.2 protofun_block_meta subgraph.yaml
 
 .PHONE: undeploy-graph
 undeploy-graph:

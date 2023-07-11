@@ -2,7 +2,7 @@ use substreams::store::{self, DeltaProto};
 use substreams_database_change::tables::Tables;
 
 use crate::pb::sf::ethereum::block_meta::v1::{BlockMeta, TransactionMeta};
-use substreams::{scalar::BigInt, Hex};
+use substreams::Hex;
 
 // TESTME: with snapshots
 pub fn block_meta_to_tables(tables: &mut Tables, deltas: store::Deltas<DeltaProto<BlockMeta>>) {

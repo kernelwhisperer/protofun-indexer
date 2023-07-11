@@ -193,7 +193,7 @@ pub fn graph_out(
 ) -> Result<EntityChanges, Error> {
     let block_meta = map_block_to_meta(block);
     let mut tables = substreams_entity_change::tables::Tables::new();
-    
+
     graph_out::block_meta_to_tables(&mut tables, block_meta.clone());
     graph_out::candle_to_tables(
         &mut tables,
@@ -237,7 +237,8 @@ pub fn graph_out(
 
 fn get_latest_time_unit(timestamp: i64, interval_in_seconds: i64, offset: i64) -> i64 {
     let timestamp_seconds = timestamp;
-    let latest_time_unit = (timestamp_seconds / interval_in_seconds) * interval_in_seconds;
+    let latest_time_unit =
+        ((timestamp_seconds - offset) / interval_in_seconds) * interval_in_seconds;
 
     return latest_time_unit + offset;
 }
@@ -376,6 +377,8 @@ fn store_base_fee_per_gas_day_close(block_meta: BlockMeta, store: StoreSetBigInt
 
 #[substreams::handlers::store]
 fn store_base_fee_per_gas_week_open(block_meta: BlockMeta, store: StoreSetIfNotExistsBigInt) {
+    // 1688958887 should give 1688947200
+    // 1628166822 should give 1627862400
     let id = get_latest_time_unit(block_meta.timestamp, 604800, 345600);
     store.set_if_not_exists(
         0,
