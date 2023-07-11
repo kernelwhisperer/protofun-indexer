@@ -106,9 +106,9 @@ services:
     ports:
       - "3000:3000"
     environment:
-      VIRTUAL_HOST: app.protocol.fun
+      VIRTUAL_HOST: protocol.fun,www.protocol.fun
       VIRTUAL_PORT: 3000
-      LETSENCRYPT_HOST: app.protocol.fun
+      LETSENCRYPT_HOST: protocol.fun,www.protocol.fun
       LETSENCRYPT_EMAIL: hello@danielconstantin.net
     networks:
       - proxy
