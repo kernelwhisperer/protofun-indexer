@@ -98,6 +98,21 @@ services:
     networks:
       - proxy
 
+  protofun-ui:
+    container_name: protofun-ui
+    image: danielconstantin/protofun-ui:0.0.1
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"
+    environment:
+      VIRTUAL_HOST: app.protocol.fun
+      VIRTUAL_PORT: 3000
+      LETSENCRYPT_HOST: app.protocol.fun
+      LETSENCRYPT_EMAIL: hello@danielconstantin.net
+    networks:
+      - proxy
+
 networks:
   proxy:
 

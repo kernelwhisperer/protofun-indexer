@@ -1,7 +1,7 @@
 ENDPOINT ?= mainnet.eth.streamingfast.io:443
 POSTGRESQL_DSN ?= psql://daniel:toor@localhost:5432/protofun?sslmode=disable
 
-START_BLOCK ?= 12965000
+START_BLOCK ?= 17670571
 STOP_BLOCK  ?= +5
 # START_BLOCK ?= 12964995
 # STOP_BLOCK  ?= 12965005
