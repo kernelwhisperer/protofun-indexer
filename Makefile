@@ -36,7 +36,7 @@ build-db:
 
 .PHONY: remove-db
 remove-db:
-	docker-compose down
+	docker compose down
 	docker volume rm protofun_pgdata
 
 .PHONY: sync-db
