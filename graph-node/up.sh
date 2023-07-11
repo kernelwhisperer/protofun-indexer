@@ -5,4 +5,4 @@ set -e
 ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 pushd "$ROOT" &> /dev/null
 
-exec docker compose up
+exec docker compose up -d
