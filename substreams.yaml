@@ -22,7 +22,7 @@ modules:
   - name: map_block
     kind: map
     # Important: to avoid back-processing  
-    initialBlock: 17670571 
+    initialBlock: 17670000 
     inputs:
       - source: sf.ethereum.type.v2.Block
     output:
@@ -32,7 +32,7 @@ modules:
 
   - name: graph_out
     kind: map
-    initialBlock: 17670571 
+    initialBlock: 17670000 
     inputs:
       - source: sf.ethereum.type.v2.Block
       - store: store_base_fee_per_gas_minute_open
@@ -56,7 +56,7 @@ modules:
 
   - name: store_base_fee_per_gas_minute_open
     kind: store
-    initialBlock: 17670571 
+    initialBlock: 17670000 
     updatePolicy: set_if_not_exists
     valueType: bigint
     inputs:
@@ -64,7 +64,7 @@ modules:
 
   - name: store_base_fee_per_gas_minute_high
     kind: store
-    initialBlock: 17670571 
+    initialBlock: 17670000 
     updatePolicy: max
     valueType: bigint
     inputs:
@@ -72,7 +72,7 @@ modules:
 
   - name: store_base_fee_per_gas_minute_low
     kind: store
-    initialBlock: 17670571 
+    initialBlock: 17670000 
     updatePolicy: min
     valueType: bigint
     inputs:
@@ -80,7 +80,7 @@ modules:
 
   - name: store_base_fee_per_gas_minute_close
     kind: store
-    initialBlock: 17670571 
+    initialBlock: 17670000 
     updatePolicy: set
     valueType: bigint
     inputs:
@@ -88,7 +88,7 @@ modules:
 
   - name: store_base_fee_per_gas_hour_open
     kind: store
-    initialBlock: 17670571 
+    initialBlock: 17670000 
     updatePolicy: set_if_not_exists
     valueType: bigint
     inputs:
@@ -96,7 +96,7 @@ modules:
 
   - name: store_base_fee_per_gas_hour_high
     kind: store
-    initialBlock: 17670571 
+    initialBlock: 17670000 
     updatePolicy: max
     valueType: bigint
     inputs:
@@ -104,7 +104,7 @@ modules:
 
   - name: store_base_fee_per_gas_hour_low
     kind: store
-    initialBlock: 17670571 
+    initialBlock: 17670000 
     updatePolicy: min
     valueType: bigint
     inputs:
@@ -112,7 +112,7 @@ modules:
 
   - name: store_base_fee_per_gas_hour_close
     kind: store
-    initialBlock: 17670571 
+    initialBlock: 17670000 
     updatePolicy: set
     valueType: bigint
     inputs:
@@ -120,7 +120,7 @@ modules:
 
   - name: store_base_fee_per_gas_day_open
     kind: store
-    initialBlock: 17670571 
+    initialBlock: 17670000 
     updatePolicy: set_if_not_exists
     valueType: bigint
     inputs:
@@ -128,7 +128,7 @@ modules:
 
   - name: store_base_fee_per_gas_day_high
     kind: store
-    initialBlock: 17670571 
+    initialBlock: 17670000 
     updatePolicy: max
     valueType: bigint
     inputs:
@@ -136,7 +136,7 @@ modules:
 
   - name: store_base_fee_per_gas_day_low
     kind: store
-    initialBlock: 17670571 
+    initialBlock: 17670000 
     updatePolicy: min
     valueType: bigint
     inputs:
@@ -144,7 +144,7 @@ modules:
 
   - name: store_base_fee_per_gas_day_close
     kind: store
-    initialBlock: 17670571 
+    initialBlock: 17670000 
     updatePolicy: set
     valueType: bigint
     inputs:
@@ -152,7 +152,7 @@ modules:
 
   - name: store_base_fee_per_gas_week_open
     kind: store
-    initialBlock: 17670571 
+    initialBlock: 17670000 
     updatePolicy: set_if_not_exists
     valueType: bigint
     inputs:
@@ -160,7 +160,7 @@ modules:
 
   - name: store_base_fee_per_gas_week_high
     kind: store
-    initialBlock: 17670571 
+    initialBlock: 17670000 
     updatePolicy: max
     valueType: bigint
     inputs:
@@ -168,7 +168,7 @@ modules:
 
   - name: store_base_fee_per_gas_week_low
     kind: store
-    initialBlock: 17670571 
+    initialBlock: 17670000 
     updatePolicy: min
     valueType: bigint
     inputs:
@@ -176,7 +176,7 @@ modules:
 
   - name: store_base_fee_per_gas_week_close
     kind: store
-    initialBlock: 17670571 
+    initialBlock: 17670000 
     updatePolicy: set
     valueType: bigint
     inputs:
