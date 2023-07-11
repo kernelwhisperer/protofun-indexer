@@ -78,6 +78,8 @@ git clone https://github.com/kernelwhisperer/protofun
 cd protofun
 sudo apt install make -y
 sudo apt-get install jq -y
+nano ~/.profile
+# paste these 2 lines
 export STREAMINGFAST_KEY=server_******* # Use your own API key
 export SUBSTREAMS_API_TOKEN=$(curl https://auth.streamingfast.io/v1/auth/issue -s --data-binary '{"api_key":"'$STREAMINGFAST_KEY'"}' | jq -r .token)
 echo $SUBSTREAMS_API_TOKEN
