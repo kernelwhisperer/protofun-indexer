@@ -16,7 +16,7 @@
 2. API key from [https://app.streamingfast.io/](https://app.streamingfast.io/)
 
     ```bash
-    sudo apt-get install jq
+    sudo apt-get install jq -y
     export STREAMINGFAST_KEY=server_******* # Use your own API key
     export SUBSTREAMS_API_TOKEN=$(curl https://auth.streamingfast.io/v1/auth/issue -s --data-binary '{"api_key":"'$STREAMINGFAST_KEY'"}' | jq -r .token)
     ```
@@ -69,4 +69,33 @@ Run:
 
 ```sh
 make stream
+```
+
+## Deployment
+
+```bash
+git clone https://github.com/kernelwhisperer/protofun
+cd protofun
+sudo apt install make -y
+sudo apt-get install jq -y
+export STREAMINGFAST_KEY=server_******* # Use your own API key
+export SUBSTREAMS_API_TOKEN=$(curl https://auth.streamingfast.io/v1/auth/issue -s --data-binary '{"api_key":"'$STREAMINGFAST_KEY'"}' | jq -r .token)
+echo $SUBSTREAMS_API_TOKEN
+# create/update port forwarding
+make start-graph-node
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh # install rust
+source "$HOME/.cargo/env"
+rustc --version # rustc 1.68.2 (9eb3afe9e 2023-03-27) after adding to $PATH
+rustup target add wasm32-unknown-unknown
+sudo apt install build-essential -y
+# Use correct binary for your platform
+LINK=$(curl -s https://api.github.com/repos/streamingfast/substreams/releases/latest | awk '/download.url.*linux/ {print $2}' | sed 's/"//g')
+curl -L  $LINK  | tar zxf -
+mkdir ~/.local/bin 
+mv substreams ~/.local/bin/substreams
+# restart shell
+substreams --version # 1.1.1
+# install nvm
+npm install -g @graphprotocol/graph-cli
+make deploy-graph
 ```

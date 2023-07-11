@@ -100,7 +100,7 @@ services:
 
   protofun-ui:
     container_name: protofun-ui
-    image: danielconstantin/protofun-ui:0.0.1
+    image: danielconstantin/protofun-ui
     expose:
       - "3000"
     ports:
