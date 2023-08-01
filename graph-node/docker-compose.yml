@@ -23,6 +23,16 @@ services:
     networks:
       - proxy
 
+  mixpanel-proxy:
+    image: mixpanel-proxy
+    environment:
+      VIRTUAL_HOST: mp.protocol.fun
+      VIRTUAL_PORT: 80
+      LETSENCRYPT_HOST: mp.protocol.fun
+      LETSENCRYPT_EMAIL: hello@danielconstantin.net
+    networks:
+      - proxy
+
   graph-node:
     container_name: graph-node
     image: graphprotocol/graph-node:c8b04a7
