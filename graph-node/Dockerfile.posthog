@@ -1,0 +1,2 @@
+FROM nginx
+COPY posthog.conf /etc/nginx/conf.d/default.conf
